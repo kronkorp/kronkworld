@@ -7,7 +7,7 @@
 #ifndef _KRONKWORLD_ENTITY_H
     #define _KRONKWORLD_ENTITY_H
     #include <array>
-#include <bitset>
+    #include <bitset>
     #include <cstdint>
     #include <queue>
     #include <vector>
@@ -17,10 +17,11 @@
 namespace kw
 {
 
+    using Entity = uint64_t ;
+    using Signature = std::bitset<MAX_COMPONENTS>;
+
     class EntityManager
     {
-        using Entity = uint64_t ;
-        using Signature = std::bitset<MAX_COMPONENTS>;
 
     public:
         Entity create()

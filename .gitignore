@@ -1,3 +1,6 @@
 # IDE Folders
 .vscode/
 .idea/
+
+# Temp file
+a.out
