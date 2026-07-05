@@ -1,0 +1,1 @@
+# KRONKWORLD - Light header-only ECS
