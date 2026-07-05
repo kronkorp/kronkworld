@@ -2,23 +2,22 @@
 ** FREE PROJECT, 2026
 ** KRONKWORLD
 ** File description:
-** World (mediator ?)
+** Entity (manager)
 */
 #ifndef _KRONKWORLD_ENTITY_H
     #define _KRONKWORLD_ENTITY_H
     #include "EntityError.hpp"
-#include <array>
+    #include <array>
     #include <bitset>
     #include <cstdint>
     #include <queue>
-    #include <vector>
     #define MAX_COMPONENTS 100
     #define MAX_ENTITIES   100
 
 namespace kw
 {
 
-    using Entity = uint64_t ;
+    using Entity = uint64_t;
     using Signature = std::bitset<MAX_COMPONENTS>;
 
     class EntityManager
