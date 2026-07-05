@@ -7,5 +7,6 @@
 #ifndef _KRONKWORLD_H
     #define _KRONKWORLD_H
     #include "world/World.hpp"
+    #include "entity/Entity.hpp"
 
 #endif /* _KRONKWORLD_H */
