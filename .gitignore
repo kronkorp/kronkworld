@@ -2,5 +2,8 @@
 .vscode/
 .idea/
 
+# Cache
+.cache
+
 # Temp file
 a.out

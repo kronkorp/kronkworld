@@ -6,7 +6,8 @@
 */
 #ifndef _KRONKWORLD_ENTITY_H
     #define _KRONKWORLD_ENTITY_H
-    #include <array>
+    #include "EntityError.hpp"
+#include <array>
     #include <bitset>
     #include <cstdint>
     #include <queue>
@@ -53,8 +54,7 @@ namespace kw
         )
         {
             if (entity >= m_signatures.size()) {
-                // TODO: Throw error
-                return;
+                throw MaxEntitiesReached();
             }
             m_signatures[entity] = signature;
         }
@@ -64,8 +64,7 @@ namespace kw
         )
         {
             if (entity >= m_signatures.size()) {
-                // TODO: Throw error
-                return 0;
+                throw MaxEntitiesReached();
             }
             return m_signatures[entity];
         }
