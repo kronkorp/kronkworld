@@ -64,7 +64,7 @@ namespace kw
         }
 
         template<typename C>
-        Component id(void)
+        Component id(void) const
         {
             static Component id = m_id++;
             return id;

@@ -47,5 +47,8 @@ int main(void)
     std::cout << "i1 pos x : " << world.get<Position>(i1).x << std::endl;
     std::cout << "i2 pos x : " << world.get<Position>(i2).x << std::endl;
 
+    std::cout << "i1 has Velocity : " << world.has<Velocity>(i1) << std::endl;
+    std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
+
     return 0;
 }

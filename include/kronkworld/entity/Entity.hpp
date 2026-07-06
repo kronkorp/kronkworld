@@ -58,9 +58,19 @@ namespace kw
             m_signatures[entity] = signature;
         }
 
-        Signature signature(
+        Signature& signature(
             Entity entity
         )
+        {
+            if (entity >= m_signatures.size()) {
+                throw MaxEntitiesReached();
+            }
+            return m_signatures[entity];
+        }
+
+        const Signature& signature(
+            Entity entity
+        ) const
         {
             if (entity >= m_signatures.size()) {
                 throw MaxEntitiesReached();

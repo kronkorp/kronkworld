@@ -31,6 +31,7 @@ namespace kw
         template<typename C, typename ...Args>
         Component add(Entity entity, Args&&... args)
         {
+            m_entityManager.signature(entity).set(m_componentManager.id<C>());
             return m_componentManager.add<C>(entity, std::forward<Args>(args)...);
         }
 
@@ -49,6 +50,12 @@ namespace kw
         void show(Entity entity) const
         {
             std::cout << "Entity : " <<  entity << std::endl;
+        }
+
+        template<typename C>
+        bool has(Entity entity) const
+        {
+            return m_entityManager.signature(entity).test(m_componentManager.id<C>());
         }
 
     private:
