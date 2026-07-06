@@ -13,6 +13,7 @@
     #include <utility>
     #include <vector>
     #include "../entity/Entity.hpp"
+#include "ComponentError.hpp"
 
 namespace kw
 {
@@ -34,16 +35,17 @@ namespace kw
 
         C& get(Entity entity)
         {
-            // FIXME: Throw
+            if (entity >= MAX_ENTITIES) {
+                throw MaxEntitiesReached();
+            }
             return m_raw[m_sparse[entity]];
         }
 
         template <typename ...Args>
         C& add(Entity entity, Args&&... args)
         {
-            // FIXME: Throw / resize
             if (entity >= MAX_ENTITIES) {
-                throw std::exception();
+                throw MaxEntitiesReached();
             }
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
@@ -60,7 +62,7 @@ namespace kw
         {
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
-                return;
+                throw MaxEntitiesReached();
             }
             auto backIdx = m_reverse.size() - 1;
             auto backEntt = m_reverse[backIdx];

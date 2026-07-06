@@ -7,6 +7,7 @@
 #ifndef _KRONKWORLD_COMPONENT_H
     #define _KRONKWORLD_COMPONENT_H
     #include "ComponentBox.hpp"
+#include "ComponentError.hpp"
 #include <array>
     #include <cstdint>
 #include <exception>
@@ -27,8 +28,7 @@ namespace kw
             auto idx = id<C>();
 
             if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
-                // FIXME: Good throw
-                throw std::exception();
+                throw MaxComponentReached();
             }
             return static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get())->get(e);
         }
@@ -39,8 +39,7 @@ namespace kw
             auto idx = id<C>();
 
             if (idx >= MAX_COMPONENTS) {
-                // FIXME: Good throw
-                throw std::exception();
+                throw MaxComponentReached();
             }
             if (m_componentBoxs[idx] == nullptr) {
                 m_componentBoxs[idx] = std::make_unique<ComponentBox<C>>();
@@ -56,8 +55,7 @@ namespace kw
             auto idx = id<C>();
 
             if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
-                // FIXME: Good throw
-                throw std::exception();
+                throw MaxComponentReached();
             }
             auto& box = *static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get());
             box.remove(e);
