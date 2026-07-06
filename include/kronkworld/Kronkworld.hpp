@@ -8,5 +8,6 @@
     #define _KRONKWORLD_H
     #include "world/World.hpp"
     #include "entity/Entity.hpp"
+    #include "component/Component.hpp"
 
 #endif /* _KRONKWORLD_H */

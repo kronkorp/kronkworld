@@ -7,6 +7,8 @@
 #ifndef _KRONKWORLD_WORLD_H
     #define _KRONKWORLD_WORLD_H
     #include "../entity/Entity.hpp"
+    #include "../component/Component.hpp"
+    #include <cstdint>
 
 namespace kw
 {
@@ -24,8 +26,15 @@ namespace kw
             m_entityManager.destroy(entity);
         }
 
+        template<typename C>
+        Component add(Entity entity)
+        {
+            return m_componentManager.id<C>();
+        }
+
     private:
-        EntityManager m_entityManager;
+        EntityManager    m_entityManager;
+        ComponentManager m_componentManager;
     };
 
 }
