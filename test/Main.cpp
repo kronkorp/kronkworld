@@ -38,5 +38,14 @@ int main(void)
     auto c2 = world.add<Position>(i2);
     std::cout << "c1 : " << c1 << ", c2: " << c2 << std::endl;
     std::cout << "c3 : " << c3 << std::endl;
+
+    world.get<Position>(i1).x = 100;
+
+    world.show(i1);
+    world.show(i2);
+
+    std::cout << "i1 pos x : " << world.get<Position>(i1).x << std::endl;
+    std::cout << "i2 pos x : " << world.get<Position>(i2).x << std::endl;
+
     return 0;
 }

@@ -6,8 +6,12 @@
 */
 #ifndef _KRONKWORLD_COMPONENT_H
     #define _KRONKWORLD_COMPONENT_H
-    #include <array>
+    #include "ComponentBox.hpp"
+#include <array>
     #include <cstdint>
+#include <exception>
+#include <memory>
+#include <utility>
 
 namespace kw
 {
@@ -18,9 +22,45 @@ namespace kw
     public:
 
         template<typename C>
-        void Add()
+        C& get(Entity e)
         {
-            return;
+            auto idx = id<C>();
+
+            if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
+                // FIXME: Good throw
+                throw std::exception();
+            }
+            return static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get())->get(e);
+        }
+
+        template<typename C, typename ...Args>
+        Component add(Entity e, Args&&... args)
+        {
+            auto idx = id<C>();
+
+            if (idx >= MAX_COMPONENTS) {
+                // FIXME: Good throw
+                throw std::exception();
+            }
+            if (m_componentBoxs[idx] == nullptr) {
+                m_componentBoxs[idx] = std::make_unique<ComponentBox<C>>();
+            }
+            auto& box = *static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get());
+            box.add(e, std::forward<Args>(args)...);
+            return idx;
+        }
+
+        template<typename C>
+        void remove(Entity e)
+        {
+            auto idx = id<C>();
+
+            if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
+                // FIXME: Good throw
+                throw std::exception();
+            }
+            auto& box = *static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get());
+            box.remove(e);
         }
 
         template<typename C>
@@ -31,8 +71,8 @@ namespace kw
         }
 
     private:
-        Component m_id;
-        // std::array<ComponentBox, MAX_COMPONENTS> m_componentBoxs;
+        inline static Component m_id;
+        std::array<std::unique_ptr<IComponentBox>, MAX_COMPONENTS> m_componentBoxs;
     };
 
 }

@@ -9,6 +9,8 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include <cstdint>
+    #include <iostream>
+#include <utility>
 
 namespace kw
 {
@@ -26,10 +28,27 @@ namespace kw
             m_entityManager.destroy(entity);
         }
 
-        template<typename C>
-        Component add(Entity entity)
+        template<typename C, typename ...Args>
+        Component add(Entity entity, Args&&... args)
         {
-            return m_componentManager.id<C>();
+            return m_componentManager.add<C>(entity, std::forward<Args>(args)...);
+        }
+
+        template<typename C>
+        C& get(Entity entity)
+        {
+            return m_componentManager.get<C>(entity);
+        }
+
+        template<typename C, typename ...Args>
+        void remove(Entity entity)
+        {
+            m_componentManager.remove<C>(entity);
+        }
+
+        void show(Entity entity) const
+        {
+            std::cout << "Entity : " <<  entity << std::endl;
         }
 
     private:
