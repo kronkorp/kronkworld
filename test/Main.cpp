@@ -24,7 +24,8 @@ class GreetSystem : public kw::ISystem
             auto view = world.view<Position>();
 
             for (auto e : view) {
-                std::cout << "Hello entt with velocity : " << e << std::endl;
+                auto& pos = view.get<Position>(e);
+                std::cout << "Hello entt with velocity : " << e << "v = " << pos.x << ", " << pos.y << std::endl;
             }
         }
 };
@@ -49,7 +50,7 @@ int main(void)
     auto i2 = world.create();
     auto c1 = world.add<Position>(i1, 100.f, 100.f);
     auto c3 = world.add<Velocity>(i1);
-    auto c2 = world.add<Position>(i2);
+    auto c2 = world.add<Position>(i2, 1.f, -82.f);
     std::cout << "c1 : " << c1.x << ", c2: " << c2.x << std::endl;
     std::cout << "c3 : " << c3.v << std::endl;
 

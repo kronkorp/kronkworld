@@ -46,6 +46,14 @@ namespace kw
             return ViewIterator(box.entities().size(), box.entities(), m_emanager, m_signature);
         }
 
+        template<typename Component>
+        Component& get(
+            Entity e
+        )
+        {
+            return m_cmanager.get<Component>(e);
+        }
+
     private:
         ComponentManager& m_cmanager;
         EntityManager&    m_emanager;

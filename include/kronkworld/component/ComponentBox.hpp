@@ -38,7 +38,7 @@ namespace kw
 
         C& get(Entity entity)
         {
-            if (entity >= MAX_ENTITIES) {
+            if (entity >= MAX_ENTITIES || m_sparse[entity] == -1UL) {
                 throw MaxEntitiesReached();
             }
             return m_raw[m_sparse[entity]];
