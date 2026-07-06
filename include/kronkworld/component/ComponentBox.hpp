@@ -24,6 +24,7 @@ namespace kw
         virtual ~IComponentBox() = default;
 
         virtual void remove(Entity e) = 0;
+        virtual const std::vector<Entity>& entities(void) const = 0;
     };
 
     template <typename C>
@@ -37,7 +38,7 @@ namespace kw
 
         C& get(Entity entity)
         {
-            if (entity >= MAX_ENTITIES) {
+            if (entity >= MAX_ENTITIES || m_sparse[entity] == -1UL) {
                 throw MaxEntitiesReached();
             }
             return m_raw[m_sparse[entity]];
@@ -51,12 +52,12 @@ namespace kw
             }
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
-                m_raw.emplace_back(std::forward<Args>(args)...);
+                m_raw.push_back(C{std::forward<Args>(args)...});
                 m_reverse.push_back(entity);
                 m_sparse[entity] = m_raw.size() - 1;
                 return m_raw.back();
             }
-            m_raw[idx] = C(std::forward<Args>(args)...);
+            m_raw[idx] = C{std::forward<Args>(args)...};
             return m_raw[idx];
         }
 
@@ -76,6 +77,11 @@ namespace kw
             m_raw.pop_back();
             m_reverse.pop_back();
             m_sparse[entity] = -1UL;
+        }
+
+        const std::vector<Entity>& entities(void) const override
+        {
+            return m_reverse;
         }
 
     private:

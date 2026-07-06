@@ -11,8 +11,8 @@
     #include <bitset>
     #include <cstdint>
     #include <queue>
-    #define MAX_COMPONENTS 100
-    #define MAX_ENTITIES   100
+    #define MAX_COMPONENTS 100000
+    #define MAX_ENTITIES   100000
 
 namespace kw
 {
@@ -26,14 +26,13 @@ namespace kw
     public:
         Entity create()
         {
-            static Entity id = 0;
             Entity e;
 
             if (!m_availables.empty()) {
                 e = m_availables.front();
                 m_availables.pop();
             } else {
-                e = id++;
+                e = m_id++;
             }
             signature(e, 0);
             return e;
@@ -79,6 +78,7 @@ namespace kw
         }
 
     private:
+        Entity                              m_id = 0;
         std::queue<Entity>                  m_availables;
         std::array<Signature, MAX_ENTITIES> m_signatures;
     };
