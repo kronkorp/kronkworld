@@ -50,5 +50,10 @@ int main(void)
     std::cout << "i1 has Velocity : " << world.has<Velocity>(i1) << std::endl;
     std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
 
+    world.remove<Velocity>(i1);
+
+    std::cout << "i1 has Velocity : " << world.has<Velocity>(i1) << std::endl;
+    std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
+
     return 0;
 }

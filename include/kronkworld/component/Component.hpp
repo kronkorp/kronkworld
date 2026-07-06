@@ -61,6 +61,15 @@ namespace kw
             box.remove(e);
         }
 
+        void clear(Entity e)
+        {
+            for (auto& box : m_componentBoxs) {
+                if (box != nullptr) {
+                    box->remove(e);
+                }
+            }
+        }
+
         template<typename C>
         Component id(void) const
         {

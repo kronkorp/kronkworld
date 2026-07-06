@@ -8,7 +8,6 @@
     #define _KRONKWORLD_WORLD_H
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
-    #include <cstdint>
     #include <iostream>
     #include <utility>
 
@@ -25,6 +24,7 @@ namespace kw
 
         void remove(Entity entity)
         {
+            m_componentManager.clear(entity);
             m_entityManager.destroy(entity);
         }
 
@@ -44,18 +44,19 @@ namespace kw
         template<typename C, typename ...Args>
         void remove(Entity entity)
         {
+            m_entityManager.signature(entity).set(m_componentManager.id<C>(), false);
             m_componentManager.remove<C>(entity);
-        }
-
-        void show(Entity entity) const
-        {
-            std::cout << "Entity : " <<  entity << std::endl;
         }
 
         template<typename C>
         bool has(Entity entity) const
         {
             return m_entityManager.signature(entity).test(m_componentManager.id<C>());
+        }
+
+        void show(Entity entity) const
+        {
+            std::cout << "Entity : " <<  entity << std::endl;
         }
 
     private:

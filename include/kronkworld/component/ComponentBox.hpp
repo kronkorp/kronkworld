@@ -9,11 +9,11 @@
     #include <algorithm>
     #include <array>
     #include <cstdint>
-#include <exception>
+    #include <exception>
     #include <utility>
     #include <vector>
     #include "../entity/Entity.hpp"
-#include "ComponentError.hpp"
+    #include "ComponentError.hpp"
 
 namespace kw
 {
@@ -22,6 +22,8 @@ namespace kw
     {
     public:
         virtual ~IComponentBox() = default;
+
+        virtual void remove(Entity e) = 0;
     };
 
     template <typename C>
@@ -58,7 +60,7 @@ namespace kw
             return m_raw[idx];
         }
 
-        void remove(Entity entity)
+        void remove(Entity entity) override
         {
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
