@@ -21,8 +21,11 @@ class GreetSystem : public kw::ISystem
     public:
         void handle(kw::World& world) override
         {
-            // auto view = world.view<Position>();
-            std::cout << "Hello entt with velocity : " << 0 << std::endl;
+            auto view = world.view<Position>();
+
+            for (auto e : view) {
+                std::cout << "Hello entt with velocity : " << e << std::endl;
+            }
         }
 };
 
@@ -67,6 +70,8 @@ int main(void)
     std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
 
     world.addUpdate(std::make_unique<GreetSystem>());
+
+    world.add<Velocity>(i1, 100.f);
 
     for (size_t i = 0; i < 100; ++i) {
         world.runOnce();

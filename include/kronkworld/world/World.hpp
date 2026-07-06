@@ -9,6 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+    #include "View.hpp"
     #include <iostream>
     #include <utility>
 
@@ -68,12 +69,18 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
+        template<typename ...C>
+        View<C...> view(void)
+        {
+            return std::move(View<C...>(m_componentManager, m_entityManager));
+        }
+
         void show(Entity entity) const
         {
             std::cout << "Entity : " <<  entity << std::endl;
         }
 
-        void runOnce()
+        void runOnce(void)
         {
             m_systemManager.runOnce(*this);
         }

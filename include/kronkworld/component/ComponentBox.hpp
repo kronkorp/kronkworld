@@ -24,6 +24,7 @@ namespace kw
         virtual ~IComponentBox() = default;
 
         virtual void remove(Entity e) = 0;
+        virtual const std::vector<Entity>& entities(void) const = 0;
     };
 
     template <typename C>
@@ -76,6 +77,11 @@ namespace kw
             m_raw.pop_back();
             m_reverse.pop_back();
             m_sparse[entity] = -1UL;
+        }
+
+        const std::vector<Entity>& entities(void) const override
+        {
+            return m_reverse;
         }
 
     private:

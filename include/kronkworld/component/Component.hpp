@@ -60,6 +60,7 @@ namespace kw
             box.remove(e);
         }
 
+        ///////////////////////////////////////////////////////////////////////
         void clear(Entity e)
         {
             for (auto& box : m_componentBoxs) {
@@ -69,6 +70,29 @@ namespace kw
             }
         }
 
+        template<typename C>
+        ComponentBox<C>& box(void)
+        {
+            auto id = this->id<C>();
+
+            if (id >= MAX_COMPONENTS) {
+                throw MaxComponentReached();
+            }
+            return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
+        }
+
+        template<typename C>
+        const ComponentBox<C> box(void) const
+        {
+            auto id = this->id<C>();
+
+            if (id >= MAX_COMPONENTS) {
+                throw MaxComponentReached();
+            }
+            return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
+        }
+
+        ///////////////////////////////////////////////////////////////////////
         template<typename C>
         Component id(void) const
         {
