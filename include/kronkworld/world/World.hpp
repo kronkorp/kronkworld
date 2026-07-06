@@ -6,6 +6,7 @@
 */
 #ifndef _KRONKWORLD_WORLD_H
     #define _KRONKWORLD_WORLD_H
+    #include "../entity/Entity.hpp"
 
 namespace kw
 {
@@ -13,11 +14,18 @@ namespace kw
     class world
     {
     public:
-        world();
-        ~world();
+        Entity create()
+        {
+            return m_entityManager.create();
+        }
+
+        void remove(Entity entity)
+        {
+            m_entityManager.destroy(entity);
+        }
 
     private:
-        
+        EntityManager m_entityManager;
     };
 
 }
