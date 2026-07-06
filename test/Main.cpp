@@ -19,9 +19,10 @@ typedef struct {
 class GreetSystem : public kw::ISystem
 {
     public:
-        void handle(kw::World& world)
+        void handle(kw::World& world) override
         {
-            std::cout << "Hello guys" << std::endl;
+            // auto view = world.view<Position>();
+            std::cout << "Hello entt with velocity : " << 0 << std::endl;
         }
 };
 
@@ -43,11 +44,11 @@ int main(void)
     }
     auto i1 = world.create();
     auto i2 = world.create();
-    auto c1 = world.add<Position>(i1);
+    auto c1 = world.add<Position>(i1, 100.f, 100.f);
     auto c3 = world.add<Velocity>(i1);
     auto c2 = world.add<Position>(i2);
-    std::cout << "c1 : " << c1 << ", c2: " << c2 << std::endl;
-    std::cout << "c3 : " << c3 << std::endl;
+    std::cout << "c1 : " << c1.x << ", c2: " << c2.x << std::endl;
+    std::cout << "c3 : " << c3.v << std::endl;
 
     world.get<Position>(i1).x = 100;
 

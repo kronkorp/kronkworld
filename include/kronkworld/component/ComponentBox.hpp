@@ -51,12 +51,12 @@ namespace kw
             }
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
-                m_raw.emplace_back(std::forward<Args>(args)...);
+                m_raw.push_back(C{std::forward<Args>(args)...});
                 m_reverse.push_back(entity);
                 m_sparse[entity] = m_raw.size() - 1;
                 return m_raw.back();
             }
-            m_raw[idx] = C(std::forward<Args>(args)...);
+            m_raw[idx] = C{std::forward<Args>(args)...};
             return m_raw[idx];
         }
 

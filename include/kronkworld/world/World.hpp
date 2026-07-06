@@ -31,7 +31,7 @@ namespace kw
 
         ///////////////////////////////////////////////////////////////////////
         template<typename C, typename ...Args>
-        Component add(Entity entity, Args&&... args)
+        C& add(Entity entity, Args&&... args)
         {
             m_entityManager.signature(entity).set(m_componentManager.id<C>());
             return m_componentManager.add<C>(entity, std::forward<Args>(args)...);
