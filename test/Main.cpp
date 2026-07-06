@@ -1,6 +1,7 @@
 #include "../include/kronkworld/Kronkworld.hpp"
 #include <cstddef>
 #include <iostream>
+#include <memory>
 
 typedef struct {
 
@@ -15,9 +16,18 @@ typedef struct {
 
 } Velocity;
 
+class GreetSystem : public kw::ISystem
+{
+    public:
+        void handle(kw::World& world)
+        {
+            std::cout << "Hello guys" << std::endl;
+        }
+};
+
 int main(void)
 {
-    kw::world world;
+    kw::World world;
 
     try {
         for (size_t i = 0; i < 50; ++i) {
@@ -54,6 +64,12 @@ int main(void)
 
     std::cout << "i1 has Velocity : " << world.has<Velocity>(i1) << std::endl;
     std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
+
+    world.addUpdate(std::make_unique<GreetSystem>());
+
+    for (size_t i = 0; i < 100; ++i) {
+        world.runOnce();
+    }
 
     return 0;
 }

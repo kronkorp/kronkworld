@@ -9,8 +9,10 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include <iostream>
+    #include <memory>
     #include <utility>
-#include <vector>
+    #include <vector>
+    #include "ISystem.hpp"
 
 namespace kw
 {
@@ -18,11 +20,29 @@ namespace kw
     class SystemManager
     {
     public:
-        
+        void addUpdate(std::unique_ptr<ISystem> system)
+        {
+            m_logicSystems.push_back(std::move(system));
+        }
+
+        void addRender(std::unique_ptr<ISystem> system)
+        {
+            m_renderSystems.push_back(std::move(system));
+        }
+
+        void runOnce(World& world)
+        {
+            for (auto& ls : m_logicSystems) {
+                ls->handle(world);
+            }
+            for (auto& rs : m_renderSystems) {
+                rs->handle(world);
+            }
+        }
 
     private:
-        // std::vector<ILogicSystem> m_logicSystems;
-        // std::vector<IRenderSystem> m_renderSystems;
+        std::vector<std::unique_ptr<ISystem>> m_logicSystems;
+        std::vector<std::unique_ptr<ISystem>> m_renderSystems;
     };
 
 }
