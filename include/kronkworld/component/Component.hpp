@@ -34,7 +34,7 @@ namespace kw
         }
 
         template<typename C, typename ...Args>
-        Component add(Entity e, Args&&... args)
+        C& add(Entity e, Args&&... args)
         {
             auto idx = id<C>();
 
@@ -45,8 +45,7 @@ namespace kw
                 m_componentBoxs[idx] = std::make_unique<ComponentBox<C>>();
             }
             auto& box = *static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get());
-            box.add(e, std::forward<Args>(args)...);
-            return idx;
+            return box.add(e, std::forward<Args>(args)...);
         }
 
         template<typename C>
@@ -61,6 +60,7 @@ namespace kw
             box.remove(e);
         }
 
+        ///////////////////////////////////////////////////////////////////////
         void clear(Entity e)
         {
             for (auto& box : m_componentBoxs) {
@@ -70,6 +70,29 @@ namespace kw
             }
         }
 
+        template<typename C>
+        ComponentBox<C>& box(void)
+        {
+            auto id = this->id<C>();
+
+            if (id >= MAX_COMPONENTS) {
+                throw MaxComponentReached();
+            }
+            return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
+        }
+
+        template<typename C>
+        const ComponentBox<C> box(void) const
+        {
+            auto id = this->id<C>();
+
+            if (id >= MAX_COMPONENTS) {
+                throw MaxComponentReached();
+            }
+            return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
+        }
+
+        ///////////////////////////////////////////////////////////////////////
         template<typename C>
         Component id(void) const
         {

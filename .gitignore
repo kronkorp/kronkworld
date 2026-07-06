@@ -7,3 +7,6 @@
 
 # Temp file
 a.out
+bench
+
+test/Benchmark.cpp

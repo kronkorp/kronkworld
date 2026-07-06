@@ -1,6 +1,7 @@
 #include "../include/kronkworld/Kronkworld.hpp"
 #include <cstddef>
 #include <iostream>
+#include <memory>
 
 typedef struct {
 
@@ -15,9 +16,23 @@ typedef struct {
 
 } Velocity;
 
+class GreetSystem : public kw::ISystem
+{
+    public:
+        void handle(kw::World& world) override
+        {
+            auto view = world.view<Position>();
+
+            for (auto e : view) {
+                auto& pos = view.get<Position>(e);
+                std::cout << "Hello entt with velocity : " << e << "v = " << pos.x << ", " << pos.y << std::endl;
+            }
+        }
+};
+
 int main(void)
 {
-    kw::world world;
+    kw::World world;
 
     try {
         for (size_t i = 0; i < 50; ++i) {
@@ -33,11 +48,11 @@ int main(void)
     }
     auto i1 = world.create();
     auto i2 = world.create();
-    auto c1 = world.add<Position>(i1);
+    auto c1 = world.add<Position>(i1, 100.f, 100.f);
     auto c3 = world.add<Velocity>(i1);
-    auto c2 = world.add<Position>(i2);
-    std::cout << "c1 : " << c1 << ", c2: " << c2 << std::endl;
-    std::cout << "c3 : " << c3 << std::endl;
+    auto c2 = world.add<Position>(i2, 1.f, -82.f);
+    std::cout << "c1 : " << c1.x << ", c2: " << c2.x << std::endl;
+    std::cout << "c3 : " << c3.v << std::endl;
 
     world.get<Position>(i1).x = 100;
 
@@ -54,6 +69,14 @@ int main(void)
 
     std::cout << "i1 has Velocity : " << world.has<Velocity>(i1) << std::endl;
     std::cout << "i2 has Velocity : " << world.has<Velocity>(i2) << std::endl;
+
+    world.addUpdate(std::make_unique<GreetSystem>());
+
+    world.add<Velocity>(i1, 100.f);
+
+    for (size_t i = 0; i < 100; ++i) {
+        world.runOnce();
+    }
 
     return 0;
 }
