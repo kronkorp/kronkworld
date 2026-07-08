@@ -9,6 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+#include <cstddef>
     #include <iostream>
     #include <tuple>
     #include <utility>
@@ -26,8 +27,22 @@ namespace kw
             EntityManager&    emanager
         ) : m_cmanager(cmanager), m_emanager(emanager)
         {
-            // NOTE: Expand for each C in template 
+            // NOTE: Expand for each C
             (m_signature.set(cmanager.id<C>()), ...);
+
+            std::pair<size_t, size_t> boxes[] = {
+                { cmanager.box<C>().entities().size(), cmanager.id<C>() }...
+            };
+            auto best_box = std::min_element(std::begin(boxes), std::end(boxes), 
+                [](const auto& a, const auto& b) {
+                    return a.first < b.first;
+                }
+            );
+
+            size_t best_size = best_box->first;
+            size_t best_id   = best_box->second;
+
+            // std::cout << "Best box: (" << best_size << ", " << best_id << ")" << std::endl;
         }
 
         ViewIterator begin()
@@ -58,6 +73,7 @@ namespace kw
         ComponentManager& m_cmanager;
         EntityManager&    m_emanager;
         Signature         m_signature;
+        // IComponentBox*    m_best;
     };
 
 }

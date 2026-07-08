@@ -7,12 +7,11 @@
 #ifndef _KRONKWORLD_COMPONENT_H
     #define _KRONKWORLD_COMPONENT_H
     #include "ComponentBox.hpp"
-#include "ComponentError.hpp"
-#include <array>
+    #include "ComponentError.hpp"
+    #include <array>
     #include <cstdint>
-#include <exception>
-#include <memory>
-#include <utility>
+    #include <memory>
+    #include <utility>
 
 namespace kw
 {
