@@ -26,8 +26,10 @@ namespace kw
         {
             auto idx = id<C>();
 
-            if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
+            if (idx >= MAX_COMPONENTS) {
                 throw MaxComponentReached();
+            } else if (m_componentBoxs[idx] == nullptr) {
+                throw BadComponent("Component \"{}\" does not exists", idx);
             }
             return static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get())->get(e);
         }
@@ -52,8 +54,10 @@ namespace kw
         {
             auto idx = id<C>();
 
-            if (idx >= MAX_COMPONENTS || m_componentBoxs[idx] == nullptr) {
+            if (idx >= MAX_COMPONENTS) {
                 throw MaxComponentReached();
+            } else if (m_componentBoxs[idx] == nullptr) {
+                throw BadComponent("Component \"{}\" does not exists", idx);
             }
             auto& box = *static_cast<ComponentBox<C>*>(m_componentBoxs[idx].get());
             box.remove(e);
@@ -77,6 +81,9 @@ namespace kw
             if (id >= MAX_COMPONENTS) {
                 throw MaxComponentReached();
             }
+            if (m_componentBoxs[id] == nullptr) {
+                throw BadComponent("Component \"{}\" does not exists", id);
+            }
             return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
         }
 
@@ -87,6 +94,9 @@ namespace kw
 
             if (id >= MAX_COMPONENTS) {
                 throw MaxComponentReached();
+            }
+            if (m_componentBoxs[id] == nullptr) {
+                throw BadComponent("Component \"{}\" does not exists", id);
             }
             return *static_cast<ComponentBox<C>*>(m_componentBoxs[id].get());
         }

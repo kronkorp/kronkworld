@@ -40,6 +40,13 @@ namespace kw
             MaxComponentReached() : ComponentError("Max component reached") {};
     };
 
+    class BadComponent : public ComponentError
+    {
+        public:
+            template<typename ...Args>
+            BadComponent(std::string_view format, Args&&... args) : ComponentError(format, std::forward<Args>(args)...) {};
+    };
+
 }
 
 #endif /* _KRONKWORLD_COMPONENT_ERROR_H */
