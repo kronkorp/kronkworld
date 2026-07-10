@@ -38,8 +38,9 @@ namespace kw
             if (id >= MAX_RESOURCES) {
                 throw MaxResourceReached();
             }
-            this->m_resources[id] = std::make_shared<R>(std::forward<Args>(args)...);
-            return *static_cast<Resource<R>*>(this->m_resources[id].get());
+            this->m_resources[id] = std::make_unique<Resource<R>>(std::forward<Args>(args)...);
+            auto* w = static_cast<Resource<R>*>(this->m_resources[id].get());
+            return w->get();
         }
 
         template<typename R>
@@ -53,7 +54,8 @@ namespace kw
             if (m_resources[id] == nullptr) {
                 throw BadResource("Resource \"{}\" does not exists", id);
             }
-            return *static_cast<Resource<R>*>(this->m_resources[id].get());
+            auto* w = static_cast<Resource<R>*>(this->m_resources[id].get());
+            return w->get();
         }
 
         template<typename R>
@@ -69,7 +71,7 @@ namespace kw
 
     private:
         std::array<std::unique_ptr<IResource>, MAX_RESOURCES> m_resources;
-        size_t                               m_id;
+        size_t                                                m_id = 0;
     };
 
 }

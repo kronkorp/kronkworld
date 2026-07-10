@@ -78,6 +78,12 @@ namespace kw
             return m_resourceManager.put<R>(std::forward<Args>(args)...);
         }
 
+        template<typename R>
+        R& getResource(void)
+        {
+            return m_resourceManager.get<R>();
+        }
+
         ///////////////////////////////////////////////////////////////////////
         template<typename ...C>
         View<C...> view(void)
