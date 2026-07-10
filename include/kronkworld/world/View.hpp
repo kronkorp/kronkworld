@@ -9,7 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
-#include <cstddef>
+    #include <cstddef>
     #include <iostream>
     #include <tuple>
     #include <utility>
@@ -29,34 +29,33 @@ namespace kw
         {
             // NOTE: Expand for each C
             (m_signature.set(cmanager.id<C>()), ...);
-
-            std::pair<size_t, size_t> boxes[] = {
-                { cmanager.box<C>().entities().size(), cmanager.id<C>() }...
+            std::pair<IComponentBox*, size_t> boxes[] = {
+                { &cmanager.box<C>(), cmanager.box<C>().entities().size() }...
             };
             auto best_box = std::min_element(std::begin(boxes), std::end(boxes), 
                 [](const auto& a, const auto& b) {
-                    return a.first < b.first;
+                    return a.second < b.second;
                 }
             );
-
-            size_t best_size = best_box->first;
-            size_t best_id   = best_box->second;
-
-            // std::cout << "Best box: (" << best_size << ", " << best_id << ")" << std::endl;
+            m_best = best_box->first;
         }
 
         ViewIterator begin()
         {
-            using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
-            auto& box = m_cmanager.box<Min>();
+            // using Min = typename std::tuple_element<m_best, std::tuple<C...>>::type;
+            // auto& box = m_cmanager.box<Min>();
+            // auto& box = std::get<m_best>(std::make_tuple<IComponentBox&>(m_cmanager.box<C>()...));
+            auto& box = *m_best;
 
             return ViewIterator(0, box.entities(), m_emanager, m_signature);
         }
 
         ViewIterator end()
         {
-            using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
-            auto& box = m_cmanager.box<Min>();
+            // using Min = typename std::tuple_element<m_best, std::tuple<C...>>::type;
+            // auto& box = m_cmanager.box<Min>();
+            // auto& box = std::get<m_best>(std::make_tuple(m_cmanager.box<C>()...));
+            auto& box = *m_best;
 
             return ViewIterator(box.entities().size(), box.entities(), m_emanager, m_signature);
         }
@@ -73,7 +72,8 @@ namespace kw
         ComponentManager& m_cmanager;
         EntityManager&    m_emanager;
         Signature         m_signature;
-        // IComponentBox*    m_best;
+        // size_t            m_best = 0;
+        IComponentBox*    m_best;
     };
 
 }

@@ -9,4 +9,9 @@
 a.out
 bench*
 
+# Test
 test/Benchmark.cpp
+test/
+
+# Build
+build
