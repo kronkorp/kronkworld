@@ -11,6 +11,8 @@
     #include "../system/System.hpp"
     #include "View.hpp"
     #include <iostream>
+#include <memory>
+#include <type_traits>
     #include <utility>
 
 namespace kw
@@ -72,7 +74,7 @@ namespace kw
         template<typename ...C>
         View<C...> view(void)
         {
-            return std::move(View<C...>(m_componentManager, m_entityManager));
+            return View<C...>(m_componentManager, m_entityManager);
         }
 
         void show(Entity entity) const

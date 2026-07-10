@@ -38,8 +38,11 @@ namespace kw
 
         C& get(Entity entity)
         {
-            if (entity >= MAX_ENTITIES || m_sparse[entity] == -1UL) {
+            if (entity >= MAX_ENTITIES) {
                 throw MaxEntitiesReached();
+
+            } else if (m_sparse[entity] == -1UL) {
+                throw BadEntity("Entity {} does not have wanted component", entity);
             }
             return m_raw[m_sparse[entity]];
         }

@@ -11,8 +11,8 @@
     #include <bitset>
     #include <cstdint>
     #include <queue>
-    #define MAX_COMPONENTS 100000
-    #define MAX_ENTITIES   100000
+    #define MAX_COMPONENTS 256
+    #define MAX_ENTITIES   256
 
 namespace kw
 {

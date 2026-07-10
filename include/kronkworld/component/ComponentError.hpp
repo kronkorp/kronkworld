@@ -37,7 +37,14 @@ namespace kw
     class MaxComponentReached : public ComponentError
     {
         public:
-            MaxComponentReached() : ComponentError("Max entity reached") {};
+            MaxComponentReached() : ComponentError("Max component reached") {};
+    };
+
+    class BadComponent : public ComponentError
+    {
+        public:
+            template<typename ...Args>
+            BadComponent(std::string_view format, Args&&... args) : ComponentError(format, std::forward<Args>(args)...) {};
     };
 
 }

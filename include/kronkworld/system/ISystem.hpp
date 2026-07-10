@@ -25,6 +25,18 @@ namespace kw
         virtual void handle(World& world) = 0;
     };
 
+    // class IRenderSystem : public ISystem
+    // {
+    // public:
+    //     virtual ~IRenderSystem() = default;
+    // };
+
+    // class ILogicSystem : public ISystem
+    // {
+    //     public:
+    //         virtual ~ILogicSystem() = default;
+    // };
+
 }
 
 #endif /* _KRONKWORLD_ILOGICSYSTEM_HPP */
