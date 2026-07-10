@@ -35,6 +35,18 @@ else()
     message(WARNING "No test source files found in ${CMAKE_CURRENT_SOURCE_DIR}/tests/")
 endif()
 
+file(GLOB_RECURSE kronkworld_BENCH_SOURCES
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/benchmark/*.cpp"
+)
+
+if(kronkworld_BENCH_SOURCES)
+    add_executable(kronkworld_bench ${kronkworld_BENCH_SOURCES})
+    target_link_libraries(kronkworld_bench PRIVATE kronkworld kronklab)
+    target_compile_options(kronkworld_bench PRIVATE -Wall -Wextra -O3)
+else()
+    message(WARNING "No test source files found in ${CMAKE_CURRENT_SOURCE_DIR}/tests/")
+endif()
+
 include(GNUInstallDirs)
 
 install(TARGETS kronkworld
