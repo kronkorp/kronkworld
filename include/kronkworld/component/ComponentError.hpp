@@ -37,7 +37,7 @@ namespace kw
     class MaxComponentReached : public ComponentError
     {
         public:
-            MaxComponentReached() : ComponentError("Max entity reached") {};
+            MaxComponentReached() : ComponentError("Max component reached") {};
     };
 
 }
