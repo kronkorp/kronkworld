@@ -9,10 +9,11 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+    #include "../ressource/RessourceManager.hpp"
     #include "View.hpp"
     #include <iostream>
-#include <memory>
-#include <type_traits>
+    #include <memory>
+    #include <type_traits>
     #include <utility>
 
 namespace kw
@@ -46,7 +47,7 @@ namespace kw
             return m_componentManager.get<C>(entity);
         }
         
-        template<typename C, typename ...Args>
+        template<typename C>
         void remove(Entity entity)
         {
             m_entityManager.signature(entity).set(m_componentManager.id<C>(), false);
@@ -68,6 +69,13 @@ namespace kw
         void addUpdate(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addUpdate(std::move(system));
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+        template<typename R, typename ...Args>
+        R& addResource(Args&&... args)
+        {
+            return m_resourceManager.put<R>(std::forward<Args>(args)...);
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -93,6 +101,7 @@ namespace kw
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
         SystemManager    m_systemManager;
+        ResourceManager  m_resourceManager;
     };
 
 }
