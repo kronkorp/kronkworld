@@ -84,6 +84,12 @@ namespace kw
             return m_resourceManager.get<R>();
         }
 
+        template<typename R>
+        void removeResource(void)
+        {
+            m_resourceManager.remove<R>();
+        }
+
         ///////////////////////////////////////////////////////////////////////
         template<typename ...C>
         View<C...> view(void)
