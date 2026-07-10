@@ -108,8 +108,6 @@ namespace kw
         }
 
     private:
-        // TODO: Ressources
-
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
         SystemManager    m_systemManager;
