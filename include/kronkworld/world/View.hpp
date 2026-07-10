@@ -42,7 +42,7 @@ namespace kw
 
         ViewIterator begin()
         {
-            // using Min = typename std::tuple_element<m_best, std::tuple<C...>>::type;
+            // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple<IComponentBox&>(m_cmanager.box<C>()...));
             auto& box = *m_best;
@@ -52,7 +52,7 @@ namespace kw
 
         ViewIterator end()
         {
-            // using Min = typename std::tuple_element<m_best, std::tuple<C...>>::type;
+            // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple(m_cmanager.box<C>()...));
             auto& box = *m_best;
