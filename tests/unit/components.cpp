@@ -33,7 +33,7 @@ Test(components, deletation)
     try {
         world.remove<Position>(e);
         world.get<Position>(e);
-    } catch (const kw::ComponentError& e) {
+    } catch (const kw::EntityError& e) {
         dummybool = true;
     }
     AssertEq(dummybool, true, "Should throw on bad component");

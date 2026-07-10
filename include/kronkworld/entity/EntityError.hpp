@@ -40,6 +40,13 @@ namespace kw
             MaxEntitiesReached() : EntityError("Max entity reached") {};
     };
 
+    class BadEntity : public EntityError
+    {
+        public:
+            template<typename ...Args>
+            BadEntity(std::string_view message, Args&&... args) : EntityError(message, std::forward<Args>(args)...) {}; 
+    };
+
 }
 
 #endif /* _KRONKWORLD_ENTITY_ERROR_H */
