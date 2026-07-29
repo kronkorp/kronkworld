@@ -23,18 +23,18 @@ namespace kw
     {
         public:
             template<typename ...Args>
-            Resource(Args&&... args) : m_internal({std::forward<Args>(args)...}) {}
+            Resource(Args&&... args) : m_internal(std::forward<Args>(args)...) {}
 
             Resource(const Resource<R>& other) = delete;
             Resource<R>& operator=(const Resource<R>& other) = delete;
 
-            const R& get() const noexcept { return m_internal; };
-            R& get() noexcept { return m_internal; };
+            [[nodiscard]] const R& get() const noexcept { return m_internal; };
+            [[nodiscard]] R& get() noexcept { return m_internal; };
 
             template<typename ...Args>
             R& put(Args&&... args)
             {
-                m_internal = R({std::forward<Args>(args)...});
+                m_internal = R(std::forward<Args>(args)...);
                 return m_internal;
             }
 

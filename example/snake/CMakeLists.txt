@@ -18,7 +18,6 @@ endif()
 
 if(NOT TARGET kronkworld)
     add_library(kronkworld INTERFACE)
-
     target_include_directories(kronkworld INTERFACE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../include>
         $<INSTALL_INTERFACE:include>
@@ -31,7 +30,7 @@ file(GLOB_RECURSE SNAKE_SRCS
 
 if(SNAKE_SRCS)
     add_executable(snake ${SNAKE_SRCS})
-    target_link_libraries(snake PRIVATE kronkworld kronklab)
+    target_link_libraries(snake PRIVATE kronkworld kronklab sfml-window sfml-graphics sfml-system)
     target_compile_options(snake PRIVATE -Wall -Wextra -O3)
 else()
     message(WARNING "No test source files found in ${CMAKE_CURRENT_SOURCE_DIR}/src/")

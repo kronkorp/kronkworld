@@ -13,7 +13,6 @@
     #include "View.hpp"
     #include <iostream>
     #include <memory>
-    #include <type_traits>
     #include <utility>
 
 namespace kw
@@ -32,6 +31,13 @@ namespace kw
             m_componentManager.clear(entity);
             m_entityManager.destroy(entity);
         }
+
+        // template<typename ...C>
+        // void spawn(C&&... components)
+        // {
+        //     auto e = m_entityManager.create();
+        //     (this->add<C>(e), ...);
+        // }
 
         ///////////////////////////////////////////////////////////////////////
         template<typename C, typename ...Args>

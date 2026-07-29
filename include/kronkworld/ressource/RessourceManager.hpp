@@ -38,7 +38,7 @@ namespace kw
             if (id >= MAX_RESOURCES) {
                 throw MaxResourceReached();
             }
-            this->m_resources[id] = std::make_unique<Resource<R>>(std::forward<Args>(args)...);
+            this->m_resources[id] = std::move(std::make_unique<Resource<R>>(std::forward<Args>(args)...));
             auto* w = static_cast<Resource<R>*>(this->m_resources[id].get());
             return w->get();
         }
