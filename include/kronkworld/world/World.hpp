@@ -113,11 +113,24 @@ namespace kw
             m_systemManager.runOnce(*this);
         }
 
+        void run(void)
+        {
+            while (m_running) {
+                m_systemManager.runOnce(*this);
+            }
+        }
+
+        void stop(void)
+        {
+            m_running = false;
+        }
+
     private:
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
         SystemManager    m_systemManager;
         ResourceManager  m_resourceManager;
+        bool             m_running = true;
     };
 
 }
