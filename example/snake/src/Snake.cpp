@@ -63,16 +63,19 @@ class WindowSystem : public kw::ISystem
 
             auto q = world.view<Body>();
             // TODO: Maybe get components directly from view iterator...
-            for (auto e : q) {
-                w.window.draw(world.get<Body>(e).rect);
-            }
+            // for (auto e : q) {
+            //     w.window.draw(world.get<Body>(e).rect);
+            // }
+            q.foreach([&w](kw::Entity, Body& b){
+                w.window.draw(b.rect);
+            });
             w.window.display();
         }
 };
 
 int main(
-    int argc,
-    char *const *argv
+    [[maybe_unused]] int argc,
+    [[maybe_unused]] char *const *argv
 )
 {
     kw::World world;
