@@ -2,6 +2,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <chrono>
 #include <iostream>
@@ -54,7 +55,7 @@ public:
         std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
 };
 
-class WindowSystem : public kw::ISystem
+class WindowRenderSystem : public kw::ISystem
 {
     public:
         void handle(kw::World& world) override
@@ -66,10 +67,46 @@ class WindowSystem : public kw::ISystem
             // for (auto e : q) {
             //     w.window.draw(world.get<Body>(e).rect);
             // }
+            w.window.clear();
             q.foreach([&w](kw::Entity, Body& b){
                 w.window.draw(b.rect);
             });
             w.window.display();
+        }
+};
+
+class WindowEventSystem : public kw::ISystem
+{
+    public:
+        void handle(kw::World& world)
+        {
+            auto& win = world.getResource<Window>();
+            sf::Event evt;
+
+            while (win.window.pollEvent(evt)) {
+                if (evt.type == sf::Event::Closed) {
+                    world.stop();
+                    return;
+                }
+            }
+        }
+};
+
+class StartupSystem : public kw::ISystem
+{
+    public:
+        void handle(kw::World& world) override
+        {
+            static int isPassed = 0;
+
+            if (isPassed > 0) {
+                return;
+            }
+            ++isPassed;
+            world.addResource<Dt>();
+            world.addResource<Window>(sf::VideoMode(800, 600), "feur");
+            auto head = world.create();
+            world.add<Body>(head, sf::Vector2f{20, 20});
         }
 };
 
@@ -80,14 +117,10 @@ int main(
 {
     kw::World world;
 
-    world.addResource<Dt>();
-    world.addResource<Window>(sf::VideoMode(800, 600), "feur");
-    auto head = world.create();
-    world.add<Body>(head, sf::Vector2f{20, 20});
+    world.addUpdate(std::make_unique<StartupSystem>());
+    world.addUpdate(std::make_unique<WindowEventSystem>());
     world.addUpdate(std::make_unique<TimeSystem>());
-    world.addRender(std::make_unique<WindowSystem>());
-    while (1) {
-        world.runOnce();
-    }
+    world.addRender(std::make_unique<WindowRenderSystem>());
+    world.run();
     return 0;
 }
