@@ -105,6 +105,7 @@ class StartupSystem : public kw::ISystem
             ++isPassed;
             world.addResource<Dt>();
             world.addResource<Window>(sf::VideoMode(800, 600), "feur");
+            // NOTE: -> world.spawn(Body{sf::Vector2f{20, 20}}, ...)
             auto head = world.create();
             world.add<Body>(head, sf::Vector2f{20, 20});
         }
@@ -122,5 +123,14 @@ int main(
     world.addUpdate(std::make_unique<TimeSystem>());
     world.addRender(std::make_unique<WindowRenderSystem>());
     world.run();
+    // NOTE: The wanted way to use kronkworld is like that:
+    /*
+     *  world.addSystem(kw::Startup, std::make_unique<StartupSystem>())
+     *      .addSystem(kw::PreUpdate, std::make_unique<WindowEventSystem>())
+     *      .addSystem(kw::Update, std::make_unique<TimeSystem>())
+     *      .addSystem(kw::Render, std::make_unique<WindowRenderSystem>());
+    */
+    // NOTE: Ressources and entities (&& coomponents) will be done into startup systems
+    // NOTE: Scheduler with multithreading and stage (group / priority) is needed (-> see https://github.com/kronkorp/kronkflow cuz this is what we're gonna use)
     return 0;
 }
