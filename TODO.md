@@ -6,4 +6,6 @@
 
 [ ] Introduce schedulers to add systems at startup, or at Update
 
-[ ] Improve views (querys) to get components without calling world.get<>()
+[X] Improve views (querys) to get components without calling world.get<>()
+
+[X] Chain methods

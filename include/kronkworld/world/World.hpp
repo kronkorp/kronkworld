@@ -67,14 +67,16 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
-        void addRender(std::unique_ptr<ISystem> system)
+        World& addRender(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addRender(std::move(system));
+            return *this;
         }
 
-        void addUpdate(std::unique_ptr<ISystem> system)
+        World& addUpdate(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addUpdate(std::move(system));
+            return *this;
         }
 
         ///////////////////////////////////////////////////////////////////////

@@ -118,11 +118,11 @@ int main(
 {
     kw::World world;
 
-    world.addUpdate(std::make_unique<StartupSystem>());
-    world.addUpdate(std::make_unique<WindowEventSystem>());
-    world.addUpdate(std::make_unique<TimeSystem>());
-    world.addRender(std::make_unique<WindowRenderSystem>());
-    world.run();
+    world.addUpdate(std::make_unique<StartupSystem>())
+        .addUpdate(std::make_unique<WindowEventSystem>())
+        .addUpdate(std::make_unique<TimeSystem>())
+        .addRender(std::make_unique<WindowRenderSystem>())
+        .run();
     // NOTE: The wanted way to use kronkworld is like that:
     /*
      *  world.addSystem(kw::Startup, std::make_unique<StartupSystem>())
