@@ -13,7 +13,6 @@
     #include "View.hpp"
     #include <iostream>
     #include <memory>
-    #include <type_traits>
     #include <utility>
 
 namespace kw
@@ -32,6 +31,13 @@ namespace kw
             m_componentManager.clear(entity);
             m_entityManager.destroy(entity);
         }
+
+        // template<typename ...C>
+        // void spawn(C&&... components)
+        // {
+        //     auto e = m_entityManager.create();
+        //     (this->add<C>(e), ...);
+        // }
 
         ///////////////////////////////////////////////////////////////////////
         template<typename C, typename ...Args>
@@ -61,14 +67,16 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
-        void addRender(std::unique_ptr<ISystem> system)
+        World& addRender(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addRender(std::move(system));
+            return *this;
         }
 
-        void addUpdate(std::unique_ptr<ISystem> system)
+        World& addUpdate(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addUpdate(std::move(system));
+            return *this;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -107,11 +115,24 @@ namespace kw
             m_systemManager.runOnce(*this);
         }
 
+        void run(void)
+        {
+            while (m_running) {
+                m_systemManager.runOnce(*this);
+            }
+        }
+
+        void stop(void)
+        {
+            m_running = false;
+        }
+
     private:
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
         SystemManager    m_systemManager;
         ResourceManager  m_resourceManager;
+        bool             m_running = true;
     };
 
 }

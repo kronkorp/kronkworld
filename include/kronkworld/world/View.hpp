@@ -13,7 +13,6 @@
     #include <iostream>
     #include <tuple>
     #include <utility>
-    #include "../iterator/ViewIterator.hpp"
 
 namespace kw
 {
@@ -22,6 +21,62 @@ namespace kw
     class View
     {
     public:
+
+        ///////////////////////////////////////////////////////////////////////
+        /**
+         * @class ViewIterator
+         *
+         * @brief Iterator to get entities that match View's requests
+         */
+        ///////////////////////////////////////////////////////////////////////
+        class ViewIterator
+        {
+            public:
+            ViewIterator(
+                size_t index,
+                const std::vector<Entity>& leaderEntities,
+                EntityManager& em,
+                ComponentManager& cm,
+                std::bitset<MAX_COMPONENTS> mask
+            ) : m_index(index), m_leaderEntities(leaderEntities), m_em(em), m_cm(cm) , m_mask(mask)
+            {
+                next();
+            }
+
+            Entity operator*() const { return m_leaderEntities[m_index]; }
+            // std::tuple<Entity, C&...> operator*() const
+            // {
+            //     auto e = m_leaderEntities[m_index];
+            //     return std::forward_as_tuple(e, m_cm.get<C>(e)...);
+            // }
+
+            ViewIterator& operator++() {
+                m_index++;
+                next();
+                return *this;
+            }
+
+            bool operator!=(const ViewIterator& other) const { return m_index != other.m_index; }
+
+        private:
+            size_t m_index;
+            const std::vector<Entity>&  m_leaderEntities;
+            EntityManager&              m_em;
+            ComponentManager&           m_cm;
+            std::bitset<MAX_COMPONENTS> m_mask;
+
+            void next() {
+                while (m_index < m_leaderEntities.size()) {
+                    Entity e = m_leaderEntities[m_index];
+                    if ((m_em.signature(e) & m_mask) == m_mask) {
+                        break;
+                    }
+                    m_index++;
+                }
+            }
+        };
+        ///////////////////////////////////////////////////////////////////////
+
         View(
             ComponentManager& cmanager,
             EntityManager&    emanager
@@ -52,10 +107,10 @@ namespace kw
             // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple<IComponentBox&>(m_cmanager.box<C>()...));
-            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_signature);
+            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_cmanager, m_signature);
             auto& box = *m_best;
 
-            return ViewIterator(0, box.entities(), m_emanager, m_signature);
+            return ViewIterator(0, box.entities(), m_emanager, m_cmanager, m_signature);
         }
 
         ViewIterator end()
@@ -63,10 +118,10 @@ namespace kw
             // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple(m_cmanager.box<C>()...));
-            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_signature);
+            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_cmanager, m_signature);
             auto& box = *m_best;
 
-            return ViewIterator(box.entities().size(), box.entities(), m_emanager, m_signature);
+            return ViewIterator(box.entities().size(), box.entities(), m_emanager, m_cmanager, m_signature);
         }
 
         template<typename Component>
@@ -75,6 +130,15 @@ namespace kw
         )
         {
             return m_cmanager.get<Component>(e);
+        }
+
+        template<typename F>
+        void foreach(F handler)
+        {
+            // NOTE: *this uses end() and begin() to get iterator and travel as fast as possible into the smallest common box...
+            for (auto e : *this) {
+                handler(e, m_cmanager.get<C>(e)...);
+            }
         }
 
     private:
