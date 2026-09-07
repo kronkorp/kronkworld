@@ -11,6 +11,7 @@
     #include "../system/System.hpp"
     #include "../ressource/RessourceManager.hpp"
     #include "View.hpp"
+#include "kronkworld/system/ISystem.hpp"
     #include <iostream>
     #include <memory>
     #include <utility>
@@ -81,6 +82,12 @@ namespace kw
         World& addUpdate(std::unique_ptr<ISystem> system)
         {
             m_systemManager.addUpdate(std::move(system));
+            return *this;
+        }
+
+        World& addSystem(size_t priority, std::unique_ptr<ISystem> system)
+        {
+            m_systemManager.addSystem(priority, std::move(system));
             return *this;
         }
 

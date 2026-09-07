@@ -1,9 +1,16 @@
+#include "kronkworld/system/ISystem.hpp"
+#include "kronkworld/world/World.hpp"
+#include <cstdio>
+#include <fstream>
+#include <ios>
+#include <iostream>
 #include <memory>
 extern "C" {
     #include "kronklab/kronklab.h"
 }
 #include "../../include/kronkworld/Kronkworld.hpp"
 #include <cstddef>
+#include "stdio.h"
 
 struct s1 {};
 struct s2 {};
@@ -116,4 +123,23 @@ Test(systems, adding_system_with_0_view)
     DummySystem3 sys;
     sys.handle(world);
     AssertEq(sys.get(), 0, "Should touch 0 entities");
+}
+
+class GreetSystem : public kw::ISystem
+{
+    public:
+        void handle(kw::World&) override
+        {
+            std::cout << "Hello world" << std::endl;
+        }
+};
+
+Test(new_systems, adding_simple_system)
+{
+    kw::World world;
+
+    world.addSystem(0, std::make_unique<GreetSystem>());
+    for (size_t i = 0; i < 10; ++i) {
+        world.runOnce();
+    }
 }
