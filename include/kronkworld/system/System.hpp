@@ -13,6 +13,7 @@
     #include <utility>
     #include <vector>
     #include "ISystem.hpp"
+    #include "kronkworld/kronkflow/Scheduler.hpp"
 
 namespace kw
 {
@@ -20,6 +21,8 @@ namespace kw
     class SystemManager
     {
     public:
+        SystemManager() : m_scheduler(128) {}
+
         void addUpdate(std::unique_ptr<ISystem> system)
         {
             m_logicSystems.push_back(std::move(system));
@@ -43,6 +46,7 @@ namespace kw
     private:
         std::vector<std::unique_ptr<ISystem>> m_logicSystems;
         std::vector<std::unique_ptr<ISystem>> m_renderSystems;
+        Scheduler                             m_scheduler;
     };
 
 }
