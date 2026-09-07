@@ -3,6 +3,7 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <chrono>
 #include <iostream>
@@ -34,6 +35,11 @@ struct Body
     {
         rect.setFillColor(sf::Color::Green);
     }
+};
+
+struct PlayerInputs
+{
+    
 };
 
 class TimeSystem : public kw::ISystem
