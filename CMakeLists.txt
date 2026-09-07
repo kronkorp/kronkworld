@@ -8,13 +8,18 @@ if(CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_CURRENT_BINARY_DIR)
     message(FATAL_ERROR "Les builds dans le dossier source sont interdits. Créez un dossier de build (ex: 'build/').")
 endif()
 
+option(BUILD_TESTS "Build KronkWorld unit tests" OFF)
+
 include(FetchContent)
-FetchContent_Declare(
-    kronklab
-    GIT_REPOSITORY https://github.com/kronkorp/kronklab
-    GIT_TAG        main
-)
-FetchContent_MakeAvailable(kronklab)
+
+if(BUILD_TESTS)
+    FetchContent_Declare(
+        kronklab
+        GIT_REPOSITORY https://github.com/kronkorp/kronklab
+        GIT_TAG        main
+    )
+    FetchContent_MakeAvailable(kronklab)
+endif()
 
 FetchContent_Declare(
     kronkflow
@@ -53,16 +58,18 @@ target_include_directories(kronkworld_static PUBLIC
 target_link_libraries(kronkworld_shared PUBLIC kronkflow)
 target_link_libraries(kronkworld_static PUBLIC kronkflow)
 
-file(GLOB_RECURSE kronkworld_TEST_SOURCES 
-    "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/*.cpp"
-)
+if(BUILD_TESTS)
+    file(GLOB_RECURSE kronkworld_TEST_SOURCES
+        "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/*.cpp"
+    )
 
-if(kronkworld_TEST_SOURCES)
-    add_executable(kronkworld_tests ${kronkworld_TEST_SOURCES})
-    target_link_libraries(kronkworld_tests PRIVATE kronkworld_shared kronklab)
-    target_compile_options(kronkworld_tests PRIVATE -Wall -Wextra -O3)
-else()
-    message(WARNING "No test source files found in ${CMAKE_CURRENT_SOURCE_DIR}/tests/")
+    if(kronkworld_TEST_SOURCES)
+        add_executable(kronkworld_tests ${kronkworld_TEST_SOURCES})
+        target_link_libraries(kronkworld_tests PRIVATE kronkworld_shared kronklab)
+        target_compile_options(kronkworld_tests PRIVATE -Wall -Wextra -O3)
+    else()
+        message(WARNING "No test source files found in ${CMAKE_CURRENT_SOURCE_DIR}/tests/")
+    endif()
 endif()
 
 include(GNUInstallDirs)
