@@ -6,9 +6,11 @@
 */
 #ifndef KRONKWORLD_SCH_ENCAPS_H
     #define KRONKWORLD_SCH_ENCAPS_H
-    #include "kronkflow/macros/types.h"
-#include "kronkflow/scheduler.h"
-#include "kronkflow/task.h"
+    extern "C" {
+        #include "kronkflow/macros/types.h"
+        #include "kronkflow/scheduler.h"
+        #include "kronkflow/task.h"
+    }
     #include <cstddef>
     #include <new>
 
