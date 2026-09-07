@@ -21,6 +21,11 @@ namespace kw
     class World
     {
     public:
+        void show(Entity entity) const;
+        void runOnce(void);
+        void run(void);
+        void stop(void);
+
         Entity create()
         {
             return m_entityManager.create();
@@ -105,27 +110,6 @@ namespace kw
             return View<C...>(m_componentManager, m_entityManager);
         }
 
-        void show(Entity entity) const
-        {
-            std::cout << "Entity : " <<  entity << std::endl;
-        }
-
-        void runOnce(void)
-        {
-            m_systemManager.runOnce(*this);
-        }
-
-        void run(void)
-        {
-            while (m_running) {
-                m_systemManager.runOnce(*this);
-            }
-        }
-
-        void stop(void)
-        {
-            m_running = false;
-        }
 
     private:
         EntityManager    m_entityManager;
