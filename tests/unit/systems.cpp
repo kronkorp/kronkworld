@@ -130,16 +130,25 @@ class GreetSystem : public kw::ISystem
     public:
         void handle(kw::World&) override
         {
-            std::cout << "Hello world" << std::endl;
+            ++m_dummy_ctr;
         }
+
+        size_t get() const { return m_dummy_ctr; }
+
+    private:
+        size_t m_dummy_ctr = 0;
 };
 
 Test(new_systems, adding_simple_system)
 {
     kw::World world;
 
-    world.addSystem(0, std::make_unique<GreetSystem>());
-    for (size_t i = 0; i < 10; ++i) {
+    auto s = std::make_unique<GreetSystem>();
+    auto* feur = s.get();
+    world.addSystem(0, std::move(s));
+    size_t occ = 10;
+    for (size_t i = 0; i < occ; ++i) {
         world.runOnce();
     }
+    AssertEq(feur->get(), occ, "Must be equal to %zu but is %zu", occ, feur->get());
 }
