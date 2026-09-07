@@ -42,8 +42,7 @@ namespace kw
             m_scheduler.pushTask((kfTaskOpt){
                 [](void *ctx, void *arg) -> int {
                     auto task = static_cast<ISystem *>(arg);
-                    task->handle(*static_cast<World *>(ctx));
-                    return true;
+                    return task->handle(*static_cast<World *>(ctx));
                 },
                 static_cast<void *>(m_systems.back().get()), NULL},
             1, 1);

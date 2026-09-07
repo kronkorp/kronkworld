@@ -22,7 +22,8 @@ namespace kw
     public:
         virtual ~ISystem() = default;
 
-        virtual void handle(World& world) = 0;
+        // NOTE: Handle returns a bool to stop the scheduler to reinserting if needed
+        virtual bool handle(World& world) = 0;
     };
 
     // class IRenderSystem : public ISystem
