@@ -12,8 +12,8 @@
     #include <utility>
     #include <vector>
     #include "ISystem.hpp"
-    #include "kronkflow/macros/types.h"
     extern "C" {
+        #include "kronkflow/macros/types.h"
         #include "kronkflow/task.h"
     }
     #include "kronkworld/kronkflow/Scheduler.hpp"
@@ -29,6 +29,7 @@ namespace kw
 
     struct RWMask {
 
+        RWMask() : read_mask(0), write_mask(0) {}
         RWMask(uint64_t read, uint64_t write) : read_mask(read), write_mask(write) {}
 
         uint64_t read_mask;

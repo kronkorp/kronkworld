@@ -58,6 +58,9 @@ target_include_directories(kronkworld_static PUBLIC
 target_link_libraries(kronkworld_shared PUBLIC kronkflow)
 target_link_libraries(kronkworld_static PUBLIC kronkflow)
 
+target_sources(kronkworld_shared PRIVATE $<TARGET_OBJECTS:kronkflow-obj>)
+target_sources(kronkworld_static PRIVATE $<TARGET_OBJECTS:kronkflow-obj>)
+
 if(BUILD_TESTS)
     file(GLOB_RECURSE kronkworld_TEST_SOURCES
         "${CMAKE_CURRENT_SOURCE_DIR}/tests/unit/*.cpp"
