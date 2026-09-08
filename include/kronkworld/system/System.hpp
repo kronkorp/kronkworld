@@ -20,6 +20,9 @@
 namespace kw
 {
 
+    typedef          uint32_t StageId;
+    static constexpr StageId  Startup = 0;
+
     class SystemManager
     {
     public:
@@ -35,14 +38,18 @@ namespace kw
             m_renderSystems.push_back(std::move(system));
         }
 
-        void addSystem([[maybe_unused]] size_t priority, std::unique_ptr<ISystem> system)
+        void addSystem(
+            StageId stage,
+            std::unique_ptr<ISystem> system
+        )
         {
             m_systems.push_back(std::move(system));
-            // FIXME: Can't call null aha dumbass
             m_scheduler.pushTask((kfTaskOpt){
                 [](void *ctx, void *arg) -> int {
                     auto task = static_cast<ISystem *>(arg);
-                    return task->handle(*static_cast<World *>(ctx));
+                    auto ret = task->handle(*static_cast<World *>(ctx));
+                    // NOTE: Mark a system as done, and remove it later if needed
+                    return ret;
                 },
                 static_cast<void *>(m_systems.back().get()), NULL},
             1, 1);
