@@ -4,13 +4,8 @@
 ** File description:
 ** World (mediator ?)
 */
-#ifndef _KRONKWORLD_ILOGICSYSTEM_HPP
-    #define _KRONKWORLD_ILOGICSYSTEM_HPP
-    #include "../entity/Entity.hpp"
-    #include "../component/Component.hpp"
-    #include <iostream>
-    #include <utility>
-    #include <vector>
+#ifndef _KRONKWORLD_ISYSTEM_HPP
+    #define _KRONKWORLD_ISYSTEM_HPP
 
 namespace kw
 {
@@ -32,18 +27,6 @@ namespace kw
             bool m_isDone;
     };
 
-    // class IRenderSystem : public ISystem
-    // {
-    // public:
-    //     virtual ~IRenderSystem() = default;
-    // };
-
-    // class ILogicSystem : public ISystem
-    // {
-    //     public:
-    //         virtual ~ILogicSystem() = default;
-    // };
-
 }
 
-#endif /* _KRONKWORLD_ILOGICSYSTEM_HPP */
+#endif /* _KRONKWORLD_ISYSTEM_HPP */
