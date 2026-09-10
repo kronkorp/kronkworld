@@ -11,8 +11,8 @@
     #include "../system/System.hpp"
     #include "../ressource/RessourceManager.hpp"
     #include "View.hpp"
-#include "kronkworld/system/ISystem.hpp"
-    #include <iostream>
+    #include "kronkworld/system/ISystem.hpp"
+    #include <cstddef>
     #include <memory>
     #include <utility>
 
@@ -34,7 +34,7 @@ namespace kw
         
         void remove(Entity entity)
         {
-            m_componentManager.clear(entity);
+            m_componentManager.clear(entity, m_entityManager.signature(entity));
             m_entityManager.destroy(entity);
         }
 
@@ -73,21 +73,33 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
-        World& addRender(std::unique_ptr<ISystem> system)
-        {
-            m_systemManager.addRender(std::move(system));
-            return *this;
-        }
+        // World& addRender(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addRender(std::move(system));
+        //     return *this;
+        // }
 
-        World& addUpdate(std::unique_ptr<ISystem> system)
-        {
-            m_systemManager.addUpdate(std::move(system));
-            return *this;
-        }
+        // World& addUpdate(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addUpdate(std::move(system));
+        //     return *this;
+        // }
 
-        World& addSystem(size_t priority, std::unique_ptr<ISystem> system)
+        World& addSystem(
+            size_t                   priority,
+            std::unique_ptr<ISystem> system,
+            size_t                   delay    = 1,
+            size_t                   interval = 1,
+            const RWMask&            mask     = RWMask(0, 0)
+        )
         {
-            m_systemManager.addSystem(priority, std::move(system));
+            m_systemManager.addSystem(
+                priority,
+                std::move(system),
+                delay,
+                interval,
+                mask
+            );
             return *this;
         }
 
