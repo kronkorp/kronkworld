@@ -34,10 +34,14 @@ class TimeSystem : public kw::ISystem {
         unsigned int m_frameCount = 0;
 };
 
-class MovementUpdateSystem : public kw::ISystem
-{
+class MovementUpdateSystem : public kw::ISystem {
     public:
         bool handle(kw::World& world) override;
+
+    private:
+        float m_accumulator = 0.f;
+        float m_stepInterval = 0.15f;
+        static constexpr float step = 20.f;
 };
 
 class PlayerInputApplySystem : public kw::ISystem
@@ -47,6 +51,12 @@ class PlayerInputApplySystem : public kw::ISystem
 };
 
 class AppleCollisionSystem : public kw::ISystem
+{
+    public:
+        bool handle(kw::World& world) override;
+};
+
+class TailMovementSystem : public kw::ISystem
 {
     public:
         bool handle(kw::World& world) override;

@@ -32,6 +32,7 @@ int main(
         .addSystem(Stages::ScanEvents,  std::make_unique<WindowEventSystem>())
         .addSystem(Stages::PreUpdate,   std::make_unique<PlayerInputApplySystem>())
         .addSystem(Stages::PreUpdate,   std::make_unique<TimeSystem>())
+        .addSystem(Stages::PreUpdate,   std::make_unique<TailMovementSystem>())
         .addSystem(Stages::Update,      std::make_unique<MovementUpdateSystem>())
         .addSystem(Stages::PostUpdate,  std::make_unique<AppleCollisionSystem>())
         .addSystem(Stages::PreRender,   std::make_unique<WindowClearSystem>())

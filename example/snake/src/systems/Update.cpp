@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <format>
@@ -88,12 +89,21 @@ bool PlayerInputApplySystem::handle(kw::World& world)
 
 bool MovementUpdateSystem::handle(kw::World& world)
 {
-    auto view = world.view<Body, Velocity, Speed>();
     auto& dt = world.getResource<Dt>();
+    m_accumulator += dt.val;
 
-    view.foreach([&dt](kw::Entity, Body& body, Velocity& vel, Speed& speed){
-        body.rect.move(vel.x * dt.val * speed.speed, vel.y * dt.val * speed.speed);
+    if (m_accumulator < m_stepInterval) {
+        return true;
+    }
+
+    m_accumulator = 0.f;
+
+    auto view = world.view<Body, Velocity>();
+
+    view.foreach([](kw::Entity, Body& body, Velocity& vel){
+        body.rect.move(vel.x * step, vel.y * step);
     });
+
     return true;
 }
 
@@ -105,8 +115,54 @@ bool AppleCollisionSystem::handle(kw::World& world)
     auto& score = world.getResource<Score>();
 
     if (world.get<Body>(apple).rect.getGlobalBounds().intersects(world.get<Body>(head).rect.getGlobalBounds())) {
-        world.get<Body>(apple).rect.setPosition((rand() % (win.window.getSize().x / 20)) * 20, (rand() % (win.window.getSize().y / 20)) * 20);
+        world.get<Body>(apple).rect.setPosition(
+            (rand() % (win.window.getSize().x / 20)) * 20.f,
+            (rand() % (win.window.getSize().y / 20)) * 20.f
+        );
+
         ++score.score;
+
+        auto& h = world.get<SnakeHead>(head);
+        sf::Vector2f spawnPos = h.history.empty() ? world.get<Body>(head).rect.getPosition() : h.history.back();
+
+        auto body = world.create();
+        auto& bodyComp = world.add<Body>(body, sf::Vector2f{20.f, 20.f});
+        bodyComp.rect.setPosition(spawnPos);
+
+        std::size_t tailCount = world.view<SnakeBody>().size();
+        world.add<SnakeBody>(body, tailCount + 1);
+    }
+
+    return true;
+}
+
+bool TailMovementSystem::handle(kw::World& world)
+{
+    auto headView = world.view<SnakeHead, Body>();
+
+    auto headEntity = headView.first();
+    auto& head = world.get<SnakeHead>(headEntity);
+    auto& headBody = world.get<Body>(headEntity);
+
+    if (head.history.front() == headBody.rect.getPosition()) {
+        return true;
+    }
+    head.history.push_front(headBody.rect.getPosition());
+
+    auto bodyView = world.view<SnakeBody, Body>();
+
+    size_t s = 0;
+    bodyView.foreach([&head, &s](kw::Entity, SnakeBody& index, Body& body){
+        std::size_t targetIdx = index.idx - 1;
+        s++;
+        if (targetIdx < head.history.size()) {
+            body.rect.setPosition(head.history[targetIdx]);
+        }
+    });
+
+    std::size_t totalTailSegments = s;
+    while (head.history.size() > totalTailSegments) {
+        head.history.pop_back();
     }
 
     return true;

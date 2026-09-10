@@ -9,7 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
-#include "kronkworld/entity/EntityError.hpp"
+    #include "kronkworld/entity/EntityError.hpp"
     #include <cstddef>
     #include <iostream>
     #include <tuple>
@@ -145,10 +145,49 @@ namespace kw
         Entity first()
         {
             // Hack as fuck
+            if constexpr (sizeof...(C) == 1) {
+                return m_best->entities()[0];
+            }
             for (auto e : *this) {
                 return e;
             }
             throw BadEntity("No entities");
+        }
+
+        [[nodiscard]] size_t size() const noexcept
+        {
+            if (!m_best) {
+                return 0;
+            }
+
+            if constexpr (sizeof...(C) == 1) {
+                return m_best->entities().size();
+            }
+            size_t count = 0;
+            for (Entity e : m_best->entities()) {
+                if ((m_emanager.signature(e) & m_signature) == m_signature) {
+                    ++count;
+                }
+            }
+            return count;
+        }
+
+        [[nodiscard]] bool empty() const noexcept
+        {
+            if (!m_best || m_best->entities().empty()) {
+                return true;
+            }
+
+            if constexpr (sizeof...(C) == 1) {
+                return false;
+            }
+
+            for (Entity e : m_best->entities()) {
+                if ((m_emanager.signature(e) & m_signature) == m_signature) {
+                    return false;
+                }
+            }
+            return true;
         }
 
     private:

@@ -7,12 +7,22 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <deque>
 #include <utility>
+#include <vector>
 
 #pragma once
 
-struct SnakeHead {};
-struct SnakeBody {};
+struct SnakeHead
+{
+    std::deque<sf::Vector2f> history;
+};
+
+struct SnakeBody
+{
+    std::size_t idx;
+};
+
 struct Apple {};
 
 struct Speed

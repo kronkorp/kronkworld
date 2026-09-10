@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cstddef>
 #include <cstdlib>
 #include <format>
 
@@ -41,11 +42,17 @@ bool SnakeStartupSystem::handle(kw::World& world)
 
     // Head
     auto head = world.create();
-    world.add<Body>(head, sf::Vector2f{20, 20}).rect.setPosition(win.window.getSize().x / 2 - 10, win.window.getSize().y / 2 - 10);
+    world.add<Body>(head, sf::Vector2f{20, 20}).rect.setPosition(win.window.getSize().x / 2, win.window.getSize().y / 2);
     world.add<Velocity>(head, 1.f, 0.f);
     world.add<PlayerInput>(head, Directions::Up);
-    world.add<Speed>(head, 100.f);
-    world.add<SnakeHead>(head);
+    auto& history = world.add<SnakeHead>(head);
+
+    for (size_t i = 0; i < 3; ++i) {
+        auto body = world.create();
+        world.add<Body>(body, sf::Vector2f{20, 20}).rect.setPosition(world.get<Body>(head).rect.getPosition() + sf::Vector2f(0, (i + 1) * 20));
+        world.add<SnakeBody>(body, static_cast<std::size_t>(i + 1));
+        history.history.push_back(world.get<Body>(body).rect.getPosition());
+    }
 
     return false;
 }
