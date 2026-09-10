@@ -9,6 +9,10 @@
 
 #pragma once
 
+struct SnakeHead {};
+struct SnakeBody {};
+struct Apple {};
+
 struct Speed
 {
     float speed;

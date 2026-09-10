@@ -57,3 +57,9 @@ class PlayerInputApplySystem : public kw::ISystem
     public:
         bool handle(kw::World& world) override;
 };
+
+class AppleCollisionSystem : public kw::ISystem
+{
+    public:
+        bool handle(kw::World& world) override;
+};

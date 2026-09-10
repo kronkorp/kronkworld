@@ -28,6 +28,7 @@ int main(
         .addSystem(Stages::PreUpdate, std::make_unique<PlayerInputApplySystem>(), 0, 1)
         .addSystem(Stages::PreUpdate, std::make_unique<TimeSystem>(), 0, 1)
         .addSystem(Stages::Update, std::make_unique<MovementUpdateSystem>(), 0, 1)
+        .addSystem(Stages::PreUpdate, std::make_unique<AppleCollisionSystem>(), 0, 1)
         .addSystem(Stages::Render, std::make_unique<WindowRenderSystem>(), 0, 1)
         .run();
     return 0;
