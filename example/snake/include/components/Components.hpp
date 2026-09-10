@@ -9,6 +9,11 @@
 
 #pragma once
 
+struct Speed
+{
+    float speed;
+};
+
 struct Velocity
 {
     float x;
@@ -24,4 +29,17 @@ struct Body
     {
         rect.setFillColor(sf::Color::Green);
     }
+};
+
+enum class Directions
+{
+    Up,
+    Right,
+    Down,
+    Left
+};
+
+struct PlayerInput
+{
+    Directions direction;
 };

@@ -9,6 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+#include "kronkworld/entity/EntityError.hpp"
     #include <cstddef>
     #include <iostream>
     #include <tuple>
@@ -139,6 +140,15 @@ namespace kw
             for (auto e : *this) {
                 handler(e, m_cmanager.get<C>(e)...);
             }
+        }
+
+        Entity first()
+        {
+            // Hack as fuck
+            for (auto e : *this) {
+                return e;
+            }
+            throw BadEntity("No entities");
         }
 
     private:

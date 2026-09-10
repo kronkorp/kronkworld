@@ -9,8 +9,13 @@
 enum Stages : std::size_t {
 
     Startup,
+    ScanEvents,
+    PreUpdate,
     Update,
+    PostUpdate,
+    PreRender,
     Render,
+    PostRender
 
 };
 
@@ -42,6 +47,12 @@ class WindowRenderSystem : public kw::ISystem
 };
 
 class MovementUpdateSystem : public kw::ISystem
+{
+    public:
+        bool handle(kw::World& world) override;
+};
+
+class PlayerInputApplySystem : public kw::ISystem
 {
     public:
         bool handle(kw::World& world) override;

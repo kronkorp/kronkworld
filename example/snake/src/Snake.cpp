@@ -24,8 +24,9 @@ int main(
 
     // NOTE: The wanted way to use kronkworld is like that:
     world.addSystem(Stages::Startup, std::make_unique<StartupSystem>(), 0, 0)
-        .addSystem(Stages::Update, std::make_unique<WindowEventSystem>(), 0, 1)
-        .addSystem(Stages::Update, std::make_unique<TimeSystem>(), 0, 1)
+        .addSystem(Stages::ScanEvents, std::make_unique<WindowEventSystem>(), 0, 1)
+        .addSystem(Stages::PreUpdate, std::make_unique<PlayerInputApplySystem>(), 0, 1)
+        .addSystem(Stages::PreUpdate, std::make_unique<TimeSystem>(), 0, 1)
         .addSystem(Stages::Update, std::make_unique<MovementUpdateSystem>(), 0, 1)
         .addSystem(Stages::Render, std::make_unique<WindowRenderSystem>(), 0, 1)
         .run();
