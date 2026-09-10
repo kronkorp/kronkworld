@@ -60,7 +60,8 @@ namespace kw
             const RWMask&            mask     = RWMask(0, 0)
         )
         {
-            m_systems.push_back(std::move(system));
+            ISystem* rawSystem = system.release();
+
             m_scheduler.pushTask((kfTaskOpt){
                 [](void *ctx, void *arg) -> int {
                     auto task = static_cast<ISystem *>(arg);
@@ -68,8 +69,8 @@ namespace kw
                     task->markAsDone();
                     return ret;
                 },
-                static_cast<void *>(m_systems.back().get()),
-                NULL,
+                static_cast<void *>(rawSystem),
+                [](void *thing){ delete static_cast<ISystem *>(thing); },
                 stage,
                 (kfRWMasks){mask.read_mask, mask.write_mask}},
             delay, interval);
@@ -84,6 +85,9 @@ namespace kw
             //     rs->handle(world);
             // }
             m_scheduler.tick(static_cast<void *>(&world));
+            // std::erase_if(m_systems, [](const auto& system) {
+            //     return system->isDone();
+            // });
         }
 
     private:
@@ -91,7 +95,7 @@ namespace kw
         // std::vector<std::unique_ptr<ISystem>> m_logicSystems;
         // std::vector<std::unique_ptr<ISystem>> m_renderSystems;
 
-        std::vector<std::unique_ptr<ISystem>> m_systems;
+        // std::vector<std::unique_ptr<ISystem>> m_systems;
         Scheduler                             m_scheduler;
     };
 
