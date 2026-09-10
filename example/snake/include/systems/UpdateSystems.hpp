@@ -19,31 +19,19 @@ enum Stages : std::size_t {
 
 };
 
-class StartupSystem : public kw::ISystem
-{
-    public:
-        bool handle(kw::World& world) override;
-};
-
 class WindowEventSystem : public kw::ISystem
 {
     public:
         bool handle(kw::World& world) override;
 };
 
-class TimeSystem : public kw::ISystem
-{
+class TimeSystem : public kw::ISystem {
     public:
         bool handle(kw::World& world) override;
-
     private:
         std::chrono::high_resolution_clock::time_point m_lastTime = std::chrono::high_resolution_clock::now();
-};
-
-class WindowRenderSystem : public kw::ISystem
-{
-    public:
-        bool handle(kw::World& world) override;
+        float m_accumulator = 0.f;
+        unsigned int m_frameCount = 0;
 };
 
 class MovementUpdateSystem : public kw::ISystem

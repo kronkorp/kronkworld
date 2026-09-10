@@ -13,7 +13,9 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include "SFML/Graphics.hpp"
 #include <utility>
-#include "systems/Systems.hpp"
+#include "systems/StartupSystems.hpp"
+#include "systems/UpdateSystems.hpp"
+#include "systems/RenderSystems.hpp"
 
 int main(
     [[maybe_unused]] int argc,
@@ -23,13 +25,20 @@ int main(
     kw::World world;
 
     // NOTE: The wanted way to use kronkworld is like that:
-    world.addSystem(Stages::Startup, std::make_unique<StartupSystem>(), 0, 0)
-        .addSystem(Stages::ScanEvents, std::make_unique<WindowEventSystem>(), 0, 1)
-        .addSystem(Stages::PreUpdate, std::make_unique<PlayerInputApplySystem>(), 0, 1)
-        .addSystem(Stages::PreUpdate, std::make_unique<TimeSystem>(), 0, 1)
-        .addSystem(Stages::Update, std::make_unique<MovementUpdateSystem>(), 0, 1)
-        .addSystem(Stages::PreUpdate, std::make_unique<AppleCollisionSystem>(), 0, 1)
-        .addSystem(Stages::Render, std::make_unique<WindowRenderSystem>(), 0, 1)
+    world
+        .addSystem(Stages::Startup,     std::make_unique<ResourcesStartupSystem>(), 0, 0)
+        .addSystem(Stages::Startup,     std::make_unique<SnakeStartupSystem>(), 0, 0)
+        .addSystem(Stages::Startup,     std::make_unique<AppleStartupSystem>(), 0, 0)
+        .addSystem(Stages::ScanEvents,  std::make_unique<WindowEventSystem>())
+        .addSystem(Stages::PreUpdate,   std::make_unique<PlayerInputApplySystem>())
+        .addSystem(Stages::PreUpdate,   std::make_unique<TimeSystem>())
+        .addSystem(Stages::Update,      std::make_unique<MovementUpdateSystem>())
+        .addSystem(Stages::PostUpdate,  std::make_unique<AppleCollisionSystem>())
+        .addSystem(Stages::PreRender,   std::make_unique<WindowClearSystem>())
+        .addSystem(Stages::PreRender,   std::make_unique<TextsRenderSystem>())
+        .addSystem(Stages::Render,      std::make_unique<WindowRenderSystem>())
+        .addSystem(Stages::Render,      std::make_unique<HUDRenderSystem>())
+        .addSystem(Stages::PostRender,  std::make_unique<WindowDisplaySystem>())
         .run();
     return 0;
 }

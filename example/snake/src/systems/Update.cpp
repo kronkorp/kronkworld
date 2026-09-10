@@ -2,11 +2,10 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <format>
-#include <iostream>
 #include "components/Components.hpp"
 #include "kronkworld/entity/Entity.hpp"
 #include "kronkworld/world/World.hpp"
-#include "systems/Systems.hpp"
+#include "systems/UpdateSystems.hpp"
 #include "resources/Resources.hpp"
 
 bool WindowEventSystem::handle(kw::World& world)
@@ -40,13 +39,23 @@ bool WindowEventSystem::handle(kw::World& world)
 
 bool TimeSystem::handle(kw::World& world)
 {
-    auto ctime = std::chrono::high_resolution_clock::now();
-
-    std::chrono::duration<float> frameTime = ctime - m_lastTime;
-    m_lastTime = ctime;
+    auto now = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<float> frameTime = now - m_lastTime;
+    m_lastTime = now;
 
     auto& dt = world.getResource<Dt>();
     dt.val = frameTime.count();
+
+    m_accumulator += dt.val;
+    m_frameCount++;
+
+    if (m_accumulator >= 1.0f) {
+        auto& fps = world.getResource<FPS>();
+        fps.fps = static_cast<float>(m_frameCount) / m_accumulator;
+
+        m_accumulator = 0.f;
+        m_frameCount = 0;
+    }
     return true;
 }
 
@@ -85,7 +94,6 @@ bool MovementUpdateSystem::handle(kw::World& world)
     view.foreach([&dt](kw::Entity, Body& body, Velocity& vel, Speed& speed){
         body.rect.move(vel.x * dt.val * speed.speed, vel.y * dt.val * speed.speed);
     });
-
     return true;
 }
 
@@ -99,7 +107,6 @@ bool AppleCollisionSystem::handle(kw::World& world)
     if (world.get<Body>(apple).rect.getGlobalBounds().intersects(world.get<Body>(head).rect.getGlobalBounds())) {
         world.get<Body>(apple).rect.setPosition((rand() % (win.window.getSize().x / 20)) * 20, (rand() % (win.window.getSize().y / 20)) * 20);
         ++score.score;
-        score.text.setString(std::format("Score: {}", score.score));
     }
 
     return true;

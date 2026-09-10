@@ -8,7 +8,9 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <cmath>
 #include <cstddef>
+#include <memory>
 #include <utility>
 
 #pragma once
@@ -29,18 +31,17 @@ struct Window
 struct Score
 {
 
-    size_t score = 0;
-    sf::Text text;
-
-    template<typename ...Args>
-    explicit Score(Args&&... args) : text(std::forward<Args>(args)...) {}
+    size_t score;
 
 };
 
 struct Font
 {
-    sf::Font font;
+    std::unique_ptr<sf::Font> font = std::make_unique<sf::Font>();;
 
-    template<typename ...Args>
-    explicit Font(Args&&... args) : font(std::forward<Args>(args)...) {}
+};
+
+struct FPS
+{
+    long double fps;
 };
