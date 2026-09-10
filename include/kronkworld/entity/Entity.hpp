@@ -7,12 +7,14 @@
 #ifndef _KRONKWORLD_ENTITY_H
     #define _KRONKWORLD_ENTITY_H
     #include "EntityError.hpp"
-    #include <array>
     #include <bitset>
     #include <cstdint>
     #include <queue>
+    #include <vector>
     #define MAX_COMPONENTS 256
-    #define MAX_ENTITIES   256
+    // NOTE: no more hard entity cap - m_signatures/m_sparse grow on demand.
+    // This is only a reserve() hint to avoid reallocations early on.
+    #define ENTITY_INITIAL_CAPACITY 4096
 
 namespace kw
 {
@@ -24,6 +26,11 @@ namespace kw
     {
 
     public:
+        EntityManager()
+        {
+            m_signatures.reserve(ENTITY_INITIAL_CAPACITY);
+        }
+
         Entity create()
         {
             Entity e;
@@ -51,9 +58,7 @@ namespace kw
             Signature signature
         )
         {
-            if (entity >= m_signatures.size()) {
-                throw MaxEntitiesReached();
-            }
+            grow(entity);
             m_signatures[entity] = signature;
         }
 
@@ -61,9 +66,7 @@ namespace kw
             Entity entity
         )
         {
-            if (entity >= m_signatures.size()) {
-                throw MaxEntitiesReached();
-            }
+            grow(entity);
             return m_signatures[entity];
         }
 
@@ -78,9 +81,16 @@ namespace kw
         }
 
     private:
-        Entity                              m_id = 0;
-        std::queue<Entity>                  m_availables;
-        std::array<Signature, MAX_ENTITIES> m_signatures;
+        void grow(Entity entity)
+        {
+            if (entity >= m_signatures.size()) {
+                m_signatures.resize(entity + 1);
+            }
+        }
+
+        Entity                 m_id = 0;
+        std::queue<Entity>     m_availables;
+        std::vector<Signature> m_signatures;
     };
 
 }

@@ -7,7 +7,6 @@
 #ifndef _KRONKWORLD_BOX_H
     #define _KRONKWORLD_BOX_H
     #include <algorithm>
-    #include <array>
     #include <cstdint>
     #include <exception>
     #include <utility>
@@ -28,20 +27,17 @@ namespace kw
     };
 
     template <typename C>
-    class ComponentBox : public IComponentBox 
+    class ComponentBox : public IComponentBox
     {
     public:
         ComponentBox()
         {
-            m_sparse.fill(-1UL);
+            m_sparse.reserve(ENTITY_INITIAL_CAPACITY);
         }
 
         C& get(Entity entity)
         {
-            if (entity >= MAX_ENTITIES) {
-                throw MaxEntitiesReached();
-
-            } else if (m_sparse[entity] == -1UL) {
+            if (entity >= m_sparse.size() || m_sparse[entity] == -1UL) {
                 throw BadEntity("Entity {} does not have wanted component", entity);
             }
             return m_raw[m_sparse[entity]];
@@ -50,9 +46,7 @@ namespace kw
         template <typename ...Args>
         C& add(Entity entity, Args&&... args)
         {
-            if (entity >= MAX_ENTITIES) {
-                throw MaxEntitiesReached();
-            }
+            grow(entity);
             auto idx = m_sparse[entity];
             if (idx == -1UL) {
                 m_raw.push_back(C{std::forward<Args>(args)...});
@@ -66,10 +60,10 @@ namespace kw
 
         void remove(Entity entity) override
         {
-            auto idx = m_sparse[entity];
-            if (idx == -1UL) {
-                throw MaxEntitiesReached();
+            if (entity >= m_sparse.size() || m_sparse[entity] == -1UL) {
+                throw BadEntity("Entity {} does not have wanted component", entity);
             }
+            auto idx = m_sparse[entity];
             auto backIdx = m_reverse.size() - 1;
             auto backEntt = m_reverse[backIdx];
             if (backIdx != idx) {
@@ -88,9 +82,16 @@ namespace kw
         }
 
     private:
-        std::array<Entity, MAX_ENTITIES> m_sparse;
-        std::vector<C>                   m_raw;
-        std::vector<Entity>              m_reverse;
+        void grow(Entity entity)
+        {
+            if (entity >= m_sparse.size()) {
+                m_sparse.resize(entity + 1, -1UL);
+            }
+        }
+
+        std::vector<Entity> m_sparse;
+        std::vector<C>      m_raw;
+        std::vector<Entity> m_reverse;
     };
 
 }
