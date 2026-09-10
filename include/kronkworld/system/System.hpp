@@ -13,7 +13,6 @@
     #include <vector>
     #include "ISystem.hpp"
     extern "C" {
-        #include "kronkflow/macros/types.h"
         #include "kronkflow/task.h"
     }
     #include "kronkworld/kronkflow/Scheduler.hpp"
@@ -22,10 +21,11 @@ namespace kw
 {
 
     typedef          uint32_t StageId;
-    static constexpr StageId  Startup = 0;
 
-    typedef size_t RunPolicy;
-    static constexpr RunPolicy EachFrame = 1;
+    // static constexpr StageId  Startup = 0;
+
+    // typedef size_t RunPolicy;
+    // static constexpr RunPolicy EachFrame = 1;
 
     struct RWMask {
 
@@ -42,26 +42,24 @@ namespace kw
     public:
         SystemManager() : m_scheduler(128) {}
 
-        void addUpdate(std::unique_ptr<ISystem> system)
-        {
-            m_logicSystems.push_back(std::move(system));
-        }
+        // void addUpdate(std::unique_ptr<ISystem> system)
+        // {
+        //     m_logicSystems.push_back(std::move(system));
+        // }
 
-        void addRender(std::unique_ptr<ISystem> system)
-        {
-            m_renderSystems.push_back(std::move(system));
-        }
+        // void addRender(std::unique_ptr<ISystem> system)
+        // {
+        //     m_renderSystems.push_back(std::move(system));
+        // }
 
         void addSystem(
-            [[maybe_unused]] StageId       stage,
-            std::unique_ptr<ISystem>       system,
-            [[maybe_unused]] const RWMask& mask   = RWMask(0, 0),
-            [[maybe_unused]] RunPolicy     policy = EachFrame,
-            [[maybe_unused]] size_t        delay  = 1
+            StageId                  stage,
+            std::unique_ptr<ISystem> system,
+            size_t                   delay    = 1,
+            size_t                   interval = 0,
+            const RWMask&            mask     = RWMask(0, 0)
         )
         {
-            auto interval = 1;
-
             m_systems.push_back(std::move(system));
             m_scheduler.pushTask((kfTaskOpt){
                 [](void *ctx, void *arg) -> int {
@@ -70,31 +68,28 @@ namespace kw
                     task->markAsDone();
                     return ret;
                 },
-                static_cast<void *>(m_systems.back().get()), NULL},
+                static_cast<void *>(m_systems.back().get()),
+                NULL,
+                stage,
+                (kfRWMasks){mask.read_mask, mask.write_mask}},
             delay, interval);
         }
 
         void runOnce(World& world)
         {
-            // FIXME: Will remove this two for loops.
-            for (auto& ls : m_logicSystems) {
-                ls->handle(world);
-            }
-            for (auto& rs : m_renderSystems) {
-                rs->handle(world);
-            }
-            m_scheduler.tick(static_cast<void *>(&world));
-            // for (auto& s : m_systems) {
-            //     if (s->isDone()) {
-
-            //     }
+            // for (auto& ls : m_logicSystems) {
+            //     ls->handle(world);
             // }
+            // for (auto& rs : m_renderSystems) {
+            //     rs->handle(world);
+            // }
+            m_scheduler.tick(static_cast<void *>(&world));
         }
 
     private:
 
-        std::vector<std::unique_ptr<ISystem>> m_logicSystems;
-        std::vector<std::unique_ptr<ISystem>> m_renderSystems;
+        // std::vector<std::unique_ptr<ISystem>> m_logicSystems;
+        // std::vector<std::unique_ptr<ISystem>> m_renderSystems;
 
         std::vector<std::unique_ptr<ISystem>> m_systems;
         Scheduler                             m_scheduler;

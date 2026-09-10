@@ -12,6 +12,7 @@
     #include "../ressource/RessourceManager.hpp"
     #include "View.hpp"
     #include "kronkworld/system/ISystem.hpp"
+    #include <cstddef>
     #include <memory>
     #include <utility>
 
@@ -72,32 +73,32 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
-        World& addRender(std::unique_ptr<ISystem> system)
-        {
-            m_systemManager.addRender(std::move(system));
-            return *this;
-        }
+        // World& addRender(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addRender(std::move(system));
+        //     return *this;
+        // }
 
-        World& addUpdate(std::unique_ptr<ISystem> system)
-        {
-            m_systemManager.addUpdate(std::move(system));
-            return *this;
-        }
+        // World& addUpdate(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addUpdate(std::move(system));
+        //     return *this;
+        // }
 
         World& addSystem(
-            size_t priority,
+            size_t                   priority,
             std::unique_ptr<ISystem> system,
-            const RWMask& mask   = RWMask(0, 0),
-            RunPolicy     policy = EachFrame,
-            size_t        delay  = 1
+            size_t                   delay    = 1,
+            size_t                   interval = 1,
+            const RWMask&            mask     = RWMask(0, 0)
         )
         {
             m_systemManager.addSystem(
                 priority,
                 std::move(system),
-                mask,
-                policy,
-                delay
+                delay,
+                interval,
+                mask
             );
             return *this;
         }
