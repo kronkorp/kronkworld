@@ -8,6 +8,7 @@
     #define _KRONKWORLD_COMPONENT_H
     #include "ComponentBox.hpp"
     #include "ComponentError.hpp"
+#include "kronkworld/entity/Entity.hpp"
     #include <array>
     #include <cstdint>
     #include <memory>
@@ -63,10 +64,11 @@ namespace kw
             box.remove(e);
         }
 
-        void clear(Entity e)
+        void clear(Entity e, const Signature& signature)
         {
-            for (auto& box : m_componentBoxs) {
-                if (box != nullptr) {
+            for (size_t idx = 0; idx < m_componentBoxs.size(); ++idx) {
+                auto& box = m_componentBoxs[idx];
+                if (box != nullptr && signature.test(idx)) {
                     box->remove(e);
                 }
             }

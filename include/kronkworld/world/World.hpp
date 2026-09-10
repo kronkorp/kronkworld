@@ -34,7 +34,7 @@ namespace kw
         
         void remove(Entity entity)
         {
-            m_componentManager.clear(entity);
+            m_componentManager.clear(entity, m_entityManager.signature(entity));
             m_entityManager.destroy(entity);
         }
 
