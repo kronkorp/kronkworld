@@ -63,7 +63,6 @@ namespace kw
             box.remove(e);
         }
 
-        ///////////////////////////////////////////////////////////////////////
         void clear(Entity e)
         {
             for (auto& box : m_componentBoxs) {

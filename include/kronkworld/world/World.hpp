@@ -9,10 +9,11 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+    #include "../ressource/RessourceManager.hpp"
     #include "View.hpp"
-    #include <iostream>
-#include <memory>
-#include <type_traits>
+    #include "kronkworld/system/ISystem.hpp"
+    #include <cstddef>
+    #include <memory>
     #include <utility>
 
 namespace kw
@@ -21,6 +22,11 @@ namespace kw
     class World
     {
     public:
+        void show(Entity entity) const;
+        void runOnce(void);
+        void run(void);
+        void stop(void);
+
         Entity create()
         {
             return m_entityManager.create();
@@ -31,6 +37,13 @@ namespace kw
             m_componentManager.clear(entity);
             m_entityManager.destroy(entity);
         }
+
+        // template<typename ...C>
+        // void spawn(C&&... components)
+        // {
+        //     auto e = m_entityManager.create();
+        //     (this->add<C>(e), ...);
+        // }
 
         ///////////////////////////////////////////////////////////////////////
         template<typename C, typename ...Args>
@@ -46,7 +59,7 @@ namespace kw
             return m_componentManager.get<C>(entity);
         }
         
-        template<typename C, typename ...Args>
+        template<typename C>
         void remove(Entity entity)
         {
             m_entityManager.signature(entity).set(m_componentManager.id<C>(), false);
@@ -60,14 +73,53 @@ namespace kw
         }
 
         ///////////////////////////////////////////////////////////////////////
-        void addRender(std::unique_ptr<ISystem> system)
+        // World& addRender(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addRender(std::move(system));
+        //     return *this;
+        // }
+
+        // World& addUpdate(std::unique_ptr<ISystem> system)
+        // {
+        //     m_systemManager.addUpdate(std::move(system));
+        //     return *this;
+        // }
+
+        World& addSystem(
+            size_t                   priority,
+            std::unique_ptr<ISystem> system,
+            size_t                   delay    = 1,
+            size_t                   interval = 1,
+            const RWMask&            mask     = RWMask(0, 0)
+        )
         {
-            m_systemManager.addRender(std::move(system));
+            m_systemManager.addSystem(
+                priority,
+                std::move(system),
+                delay,
+                interval,
+                mask
+            );
+            return *this;
         }
 
-        void addUpdate(std::unique_ptr<ISystem> system)
+        ///////////////////////////////////////////////////////////////////////
+        template<typename R, typename ...Args>
+        R& addResource(Args&&... args)
         {
-            m_systemManager.addUpdate(std::move(system));
+            return m_resourceManager.put<R>(std::forward<Args>(args)...);
+        }
+
+        template<typename R>
+        R& getResource(void)
+        {
+            return m_resourceManager.get<R>();
+        }
+
+        template<typename R>
+        void removeResource(void)
+        {
+            m_resourceManager.remove<R>();
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -77,22 +129,13 @@ namespace kw
             return View<C...>(m_componentManager, m_entityManager);
         }
 
-        void show(Entity entity) const
-        {
-            std::cout << "Entity : " <<  entity << std::endl;
-        }
-
-        void runOnce(void)
-        {
-            m_systemManager.runOnce(*this);
-        }
 
     private:
-        // TODO: Ressources
-
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
         SystemManager    m_systemManager;
+        ResourceManager  m_resourceManager;
+        bool             m_running = true;
     };
 
 }
