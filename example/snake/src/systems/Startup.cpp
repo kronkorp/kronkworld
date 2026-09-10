@@ -1,7 +1,9 @@
 #include "systems/Systems.hpp"
 #include "resources/Resources.hpp"
 #include "components/Components.hpp"
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <cstdlib>
 
 bool StartupSystem::handle(kw::World& world)
 {
@@ -15,6 +17,8 @@ bool StartupSystem::handle(kw::World& world)
     world.add<Speed>(head, 100.f);
 
     auto apple = world.create();
+    world.add<Body>(apple, sf::Vector2f{20, 20}).rect.setPosition((rand() % (win.window.getSize().x / 20)) * 20, (rand() % (win.window.getSize().y / 20)) * 20);
+    world.get<Body>(apple).rect.setFillColor(sf::Color::Red);
 
     return false;
 }
