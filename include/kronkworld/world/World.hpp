@@ -23,7 +23,10 @@ namespace kw
     {
     public:
         void show(Entity entity) const;
+        // Runs one tick of both schedules: Fixed, then Frame
         void runOnce(void);
+        // Runs one tick of a single schedule
+        void runOnce(Schedule schedule);
         void run(void);
         void stop(void);
 
@@ -85,6 +88,7 @@ namespace kw
         //     return *this;
         // }
 
+        // In the Fixed schedule
         World& addSystem(
             size_t                   priority,
             std::unique_ptr<ISystem> system,
@@ -93,14 +97,52 @@ namespace kw
             const RWMask&            mask     = RWMask(0, 0)
         )
         {
+            return addSystem(Schedule::Fixed, priority, std::move(system), delay, interval, mask);
+        }
+
+        World& addSystem(
+            Schedule                 schedule,
+            size_t                   priority,
+            std::unique_ptr<ISystem> system,
+            size_t                   delay    = 1,
+            size_t                   interval = 1,
+            const RWMask&            mask     = RWMask(0, 0)
+        )
+        {
             m_systemManager.addSystem(
-                priority,
+                schedule,
+                static_cast<StageId>(priority),
                 std::move(system),
                 delay,
                 interval,
                 mask
             );
             return *this;
+        }
+
+        // Same, but gives back a handle to remove the system later
+        SystemHandle scheduleSystem(
+            Schedule                 schedule,
+            size_t                   priority,
+            std::unique_ptr<ISystem> system,
+            size_t                   delay    = 1,
+            size_t                   interval = 1,
+            const RWMask&            mask     = RWMask(0, 0)
+        )
+        {
+            return m_systemManager.addSystem(
+                schedule,
+                static_cast<StageId>(priority),
+                std::move(system),
+                delay,
+                interval,
+                mask
+            );
+        }
+
+        bool removeSystem(const SystemHandle& handle)
+        {
+            return m_systemManager.removeSystem(handle);
         }
 
         ///////////////////////////////////////////////////////////////////////

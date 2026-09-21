@@ -7,13 +7,19 @@ void kw::World::show(Entity entity) const
 
 void kw::World::runOnce(void)
 {
-    m_systemManager.runOnce(*this);
+    runOnce(Schedule::Fixed);
+    runOnce(Schedule::Frame);
+}
+
+void kw::World::runOnce(Schedule schedule)
+{
+    m_systemManager.runOnce(*this, schedule);
 }
 
 void kw::World::run(void)
 {
     while (m_running) {
-        m_systemManager.runOnce(*this);
+        runOnce();
     }
 }
 

@@ -24,7 +24,7 @@ namespace kw
         bool isDone(void) const { return m_isDone; }
 
     private:
-            bool m_isDone;
+            bool m_isDone = false;
     };
 
 }
