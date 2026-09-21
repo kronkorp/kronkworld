@@ -28,6 +28,9 @@ namespace kw
                 }
             }
 
+            Scheduler(Scheduler& other) = delete;
+            Scheduler(Scheduler&& other) = delete;
+
             ~Scheduler()
             {
                 kfScheduler_destroy(sch);
@@ -50,6 +53,12 @@ namespace kw
             )
             {
                 return kfScheduler_addTask(sch, opt, delay, interval);
+            }
+
+            // true if the task was found (its clearer has run or will run)
+            bool remove(kfTaskID id)
+            {
+                return kfScheduler_removeTask(sch, id) != 0;
             }
 
         private:

@@ -5,14 +5,8 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/VideoMode.hpp>
-#include <chrono>
-#include <cstddef>
-#include <iostream>
 #include <memory>
-#include "../../../include/kronkworld/Kronkworld.hpp"
 #include <SFML/Graphics/RenderWindow.hpp>
-#include "SFML/Graphics.hpp"
-#include <utility>
 #include "systems/StartupSystems.hpp"
 #include "systems/UpdateSystems.hpp"
 #include "systems/RenderSystems.hpp"

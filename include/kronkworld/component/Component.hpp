@@ -10,6 +10,7 @@
     #include "ComponentError.hpp"
 #include "kronkworld/entity/Entity.hpp"
     #include <array>
+    #include <atomic>
     #include <cstdint>
     #include <memory>
     #include <utility>
@@ -106,12 +107,12 @@ namespace kw
         template<typename C>
         Component id(void) const
         {
-            static Component id = m_id++;
+            static const Component id = m_id.fetch_add(1);
             return id;
         }
 
     private:
-        inline static Component m_id;
+        inline static std::atomic<Component> m_id{0};
         std::array<std::unique_ptr<IComponentBox>, MAX_COMPONENTS> m_componentBoxs;
     };
 

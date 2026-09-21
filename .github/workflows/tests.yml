@@ -1,0 +1,56 @@
+name: Unit tests
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  unit-tests:
+    name: Unit tests (${{ matrix.cxx }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - cc: gcc
+            cxx: g++
+          - cc: clang
+            cxx: clang++
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: >
+          cmake -S . -B build
+          -DBUILD_TESTS=ON
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_C_COMPILER=${{ matrix.cc }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+
+      - name: Build
+        run: cmake --build build --parallel --target kronkworld_tests
+
+      - name: Run unit tests
+        # kronklab's runner always exits with 0, even when tests fail or
+        # crash, so the exit code can't be trusted: parse the final report.
+        run: |
+          set -o pipefail
+          ./build/kronkworld_tests | tee test-output.txt
+
+          report=$(sed 's/\x1b\[[0-9;]*m//g' test-output.txt | grep '^\[REPORT\] total')
+          echo "$report"
+
+          total=$(sed -E 's/.*total \[([0-9]+)\].*/\1/' <<< "$report")
+          failed=$(sed -E 's/.*failed \[([0-9]+)\].*/\1/' <<< "$report")
+          crashed=$(sed -E 's/.*crashed \[([0-9]+)\].*/\1/' <<< "$report")
+
+          if [ -z "$report" ] || [ "${total:-0}" -eq 0 ]; then
+            echo "::error::No test report found or no test was run"
+            exit 1
+          fi
+          if [ "$failed" -ne 0 ] || [ "$crashed" -ne 0 ]; then
+            echo "::error::$failed test(s) failed, $crashed test(s) crashed"
+            exit 1
+          fi
