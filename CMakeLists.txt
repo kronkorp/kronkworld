@@ -12,11 +12,17 @@ option(BUILD_TESTS "Build KronkWorld unit tests" OFF)
 
 include(FetchContent)
 
+# NOTE: Pinned: KronkWorld does not change when their main does
 if(BUILD_TESTS)
+    # NOTE: kronklab runs each test in a fork(), which Windows does not have
+    if(WIN32)
+        message(FATAL_ERROR "The tests need kronklab, which runs on POSIX only: configure with -DBUILD_TESTS=OFF")
+    endif()
+
     FetchContent_Declare(
         kronklab
         GIT_REPOSITORY https://github.com/kronkorp/kronklab
-        GIT_TAG        main
+        GIT_TAG        ed591c8d0172558ca72eecac4f55c2bb1344625a
     )
     FetchContent_MakeAvailable(kronklab)
 endif()
@@ -24,9 +30,13 @@ endif()
 FetchContent_Declare(
     kronkflow
     GIT_REPOSITORY https://github.com/kronkorp/kronkflow
-    GIT_TAG        main
+    GIT_TAG        af9c0c9410f7a94b03e6624350f79eb0ea497542
 )
+# NOTE: kronkflow reads BUILD_TESTS too: its tests are not ours to build
+set(KRONKWORLD_BUILD_TESTS ${BUILD_TESTS})
+set(BUILD_TESTS OFF)
 FetchContent_MakeAvailable(kronkflow)
+set(BUILD_TESTS ${KRONKWORLD_BUILD_TESTS})
 
 option(KRONKWORLD_INSTALL "Install KronkWorld libraries and headers" OFF)
 
@@ -42,6 +52,15 @@ add_library(kronkworld::static ALIAS kronkworld_static)
 
 set_target_properties(kronkworld_shared PROPERTIES EXPORT_NAME shared OUTPUT_NAME kronkworld)
 set_target_properties(kronkworld_static PROPERTIES EXPORT_NAME static OUTPUT_NAME kronkworld)
+
+if(MSVC)
+    # NOTE: The import library of the DLL is already kronkworld.lib
+    set_target_properties(kronkworld_static PROPERTIES OUTPUT_NAME kronkworld_static)
+endif()
+
+# NOTE: On Windows, a DLL only gives what it exports: the API is not marked for
+#       it, so it exports all
+set_target_properties(kronkworld_shared PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 target_compile_features(kronkworld_shared PUBLIC cxx_std_20)
 target_compile_features(kronkworld_static PUBLIC cxx_std_20)
