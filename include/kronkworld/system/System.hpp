@@ -83,7 +83,7 @@ namespace kw
         {
             ISystem* rawSystem = system.release();
 
-            auto id = scheduler(schedule).pushTask((kfTaskOpt){
+            auto id = scheduler(schedule).pushTask(kfTaskOpt{
                 [](void *ctx, void *arg) -> int {
                     auto task = static_cast<ISystem *>(arg);
                     auto ret = task->handle(*static_cast<World *>(ctx));
@@ -93,7 +93,7 @@ namespace kw
                 static_cast<void *>(rawSystem),
                 [](void *thing){ delete static_cast<ISystem *>(thing); },
                 stage,
-                (kfRWMasks){mask.read_mask, mask.write_mask}},
+                kfRWMasks{mask.read_mask, mask.write_mask}},
             delay, interval);
             if (id == 0) {
                 delete rawSystem;
