@@ -30,7 +30,7 @@ endif()
 FetchContent_Declare(
     kronkflow
     GIT_REPOSITORY https://github.com/kronkorp/kronkflow
-    GIT_TAG        af9c0c9410f7a94b03e6624350f79eb0ea497542
+    GIT_TAG        d1c604712de759e58a65fa22825a70cd4eae3871
 )
 # NOTE: kronkflow reads BUILD_TESTS too: its tests are not ours to build
 set(KRONKWORLD_BUILD_TESTS ${BUILD_TESTS})
