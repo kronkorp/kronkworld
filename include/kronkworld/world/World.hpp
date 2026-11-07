@@ -14,6 +14,7 @@
     #include "kronkworld/system/ISystem.hpp"
     #include <cstddef>
     #include <memory>
+    #include <type_traits>
     #include <utility>
 
 namespace kw
@@ -41,19 +42,30 @@ namespace kw
             m_entityManager.destroy(entity);
         }
 
-        // template<typename ...C>
-        // void spawn(C&&... components)
-        // {
-        //     auto e = m_entityManager.create();
-        //     (this->add<C>(e), ...);
-        // }
+        // Creates an entity that owns the given components (copied or moved in).
+        // If one of them throws, the entity is destroyed again before rethrowing.
+        template<typename ...C>
+        Entity spawn(C&&... components)
+        {
+            auto e = create();
+
+            try {
+                (add<std::decay_t<C>>(e, std::forward<C>(components)), ...);
+            } catch (...) {
+                remove(e);
+                throw;
+            }
+            return e;
+        }
 
         ///////////////////////////////////////////////////////////////////////
         template<typename C, typename ...Args>
         C& add(Entity entity, Args&&... args)
         {
+            // The bit is set once the component is in: remove(Entity) trusts it
+            auto& component = m_componentManager.add<C>(entity, std::forward<Args>(args)...);
             m_entityManager.signature(entity).set(m_componentManager.id<C>());
-            return m_componentManager.add<C>(entity, std::forward<Args>(args)...);
+            return component;
         }
 
         template<typename C>
