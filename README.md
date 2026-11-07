@@ -30,8 +30,14 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
+  <a href="https://github.com/kronkorp">
+    <img src="images/kronkcorp-k.svg" alt="Kronk Corp logo" width="200" align="middle">
+  </a>
+  &emsp;
+  <img src="images/separator.svg" alt="" width="1" height="170" align="middle">
+  &emsp;
   <a href="https://github.com/kronkorp/kronkworld">
-    <img src="images/kronkworld.png" alt="Logo" width="200">
+    <img src="images/kronkworld.png" alt="KronkWorld logo" width="200" align="middle">
   </a>
 
 <h3 align="center">KronkWorld</h3>
