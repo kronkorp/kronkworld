@@ -9,6 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+#include "kronkworld/component/ComponentBox.hpp"
     #include "kronkworld/entity/EntityError.hpp"
     #include <cstddef>
     #include <iostream>
@@ -90,12 +91,11 @@ namespace kw
             (m_signature.set(cmanager.id<C>()), ...);
             try {
                 std::pair<IComponentBox*, size_t> boxes[] = {
-                    { &cmanager.box<C>(), cmanager.box<C>().entities().size() }...
+                    // NOTE: No more calling 2 time cmanager.box<C>()  :)
+                    [](auto& box) { return std::pair<IComponentBox*, size_t>{&box, box.entities().size() }; }(cmanager.box<C>())...
                 };
                 auto best_box = std::min_element(std::begin(boxes), std::end(boxes), 
-                    [](const auto& a, const auto& b) {
-                        return a.second < b.second;
-                    }
+                    [](const auto& a, const auto& b) { return a.second < b.second; }
                 );
                 m_best = best_box->first;
             } catch (const BadComponent&) {
