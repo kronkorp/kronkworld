@@ -97,9 +97,6 @@ namespace kw
                         return a.second < b.second;
                     }
                 );
-                if (!best_box || best_box->first == nullptr) {
-                    throw BadEntity("feur martin");
-                }
                 m_best = best_box->first;
             } catch (const BadComponent&) {
                 m_best = nullptr;
