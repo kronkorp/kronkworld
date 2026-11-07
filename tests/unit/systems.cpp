@@ -156,3 +156,20 @@ Test(new_systems, adding_simple_system)
     }
     AssertEq(feur->get(), occ, "Must be equal to %zu but is %zu", occ, feur->get());
 }
+
+// Regression: a View on a component type nobody ever added used to hold a
+// reference to a destroyed temporary vector.
+Test(systems, view_on_unused_component)
+{
+    kw::World world;
+    struct Never { int v; };
+    size_t n = 0;
+
+    world.create();
+    auto view = world.view<Never>();
+    for (auto e : view) {
+        (void)e;
+        ++n;
+    }
+    AssertEq(n, 0, "A view on an unused component must be empty, got %zu", n);
+}
