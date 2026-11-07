@@ -9,6 +9,7 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include "../system/System.hpp"
+#include "kronkworld/component/ComponentBox.hpp"
     #include "kronkworld/entity/EntityError.hpp"
     #include <cstddef>
     #include <iostream>
@@ -59,6 +60,9 @@ namespace kw
 
             bool operator!=(const ViewIterator& other) const { return m_index != other.m_index; }
 
+            // Outlives the iterators: a temporary here would leave m_leaderEntities dangling
+            static inline const std::vector<Entity> none{};
+
         private:
             size_t m_index;
             const std::vector<Entity>&  m_leaderEntities;
@@ -87,16 +91,12 @@ namespace kw
             (m_signature.set(cmanager.id<C>()), ...);
             try {
                 std::pair<IComponentBox*, size_t> boxes[] = {
-                    { &cmanager.box<C>(), cmanager.box<C>().entities().size() }...
+                    // NOTE: No more calling 2 time cmanager.box<C>()  :)
+                    [](auto& box) { return std::pair<IComponentBox*, size_t>{&box, box.entities().size() }; }(cmanager.box<C>())...
                 };
                 auto best_box = std::min_element(std::begin(boxes), std::end(boxes), 
-                    [](const auto& a, const auto& b) {
-                        return a.second < b.second;
-                    }
+                    [](const auto& a, const auto& b) { return a.second < b.second; }
                 );
-                if (!best_box || best_box->first == nullptr) {
-                    throw BadEntity("feur martin");
-                }
                 m_best = best_box->first;
             } catch (const BadComponent&) {
                 m_best = nullptr;
@@ -108,7 +108,7 @@ namespace kw
             // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple<IComponentBox&>(m_cmanager.box<C>()...));
-            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_cmanager, m_signature);
+            if (!m_best) return ViewIterator(-1UL, ViewIterator::none, m_emanager, m_cmanager, m_signature);
             auto& box = *m_best;
 
             return ViewIterator(0, box.entities(), m_emanager, m_cmanager, m_signature);
@@ -119,7 +119,7 @@ namespace kw
             // using Min = typename std::tuple_element<0, std::tuple<C...>>::type;
             // auto& box = m_cmanager.box<Min>();
             // auto& box = std::get<m_best>(std::make_tuple(m_cmanager.box<C>()...));
-            if (!m_best) return ViewIterator(-1UL, std::vector<Entity>(), m_emanager, m_cmanager, m_signature);
+            if (!m_best) return ViewIterator(-1UL, ViewIterator::none, m_emanager, m_cmanager, m_signature);
             auto& box = *m_best;
 
             return ViewIterator(box.entities().size(), box.entities(), m_emanager, m_cmanager, m_signature);
