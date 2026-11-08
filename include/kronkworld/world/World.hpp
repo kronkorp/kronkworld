@@ -187,8 +187,10 @@ namespace kw
     private:
         EntityManager    m_entityManager;
         ComponentManager m_componentManager;
-        SystemManager    m_systemManager;
+        // Destroyed in reverse order: the resources must outlive the systems,
+        // so that a system can release what it holds from its destructor
         ResourceManager  m_resourceManager;
+        SystemManager    m_systemManager;
         bool             m_running = true;
     };
 
