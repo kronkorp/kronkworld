@@ -84,3 +84,18 @@ Test(type_ids, component_ids_thread_safe)
 
     checkIdsAcrossThreads([&]<int N>() { return static_cast<size_t>(components.id<Tag<N>>()); });
 }
+
+// Another binary (a DLL) that numbered the type first: the name gives the same id here
+Test(type_ids, the_id_comes_from_the_name)
+{
+    struct OnlyHere { int v; };
+    struct OnlyThere { int v; };
+
+    const size_t resource = kw::detail::resourceTypeId(kw::detail::typeName<OnlyHere>());
+    const size_t component = kw::detail::componentTypeId(kw::detail::typeName<OnlyThere>());
+
+    AssertEq(kw::ResourceManager::id<OnlyHere>(), resource, "resource id by name, got %zu", kw::ResourceManager::id<OnlyHere>());
+    AssertEq(static_cast<size_t>(kw::ComponentManager{}.id<OnlyThere>()), component, "component id by name");
+    AssertEq(kw::detail::resourceTypeId(kw::detail::typeName<OnlyHere>()), resource, "the same name, the same id");
+    AssertEq(kw::detail::resourceTypeId(kw::detail::typeName<OnlyThere>()) != resource, true, "two names, two ids");
+}
