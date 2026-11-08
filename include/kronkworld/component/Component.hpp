@@ -8,9 +8,9 @@
     #define _KRONKWORLD_COMPONENT_H
     #include "ComponentBox.hpp"
     #include "ComponentError.hpp"
+    #include "../TypeId.hpp"
 #include "kronkworld/entity/Entity.hpp"
     #include <array>
-    #include <atomic>
     #include <cstdint>
     #include <memory>
     #include <utility>
@@ -107,12 +107,11 @@ namespace kw
         template<typename C>
         Component id(void) const
         {
-            static const Component id = m_id.fetch_add(1);
+            static const Component id = detail::componentTypeId(detail::typeName<C>());
             return id;
         }
 
     private:
-        inline static std::atomic<Component> m_id{0};
         std::array<std::unique_ptr<IComponentBox>, MAX_COMPONENTS> m_componentBoxs;
     };
 
