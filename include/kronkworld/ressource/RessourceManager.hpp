@@ -9,10 +9,10 @@
     #include "../entity/Entity.hpp"
     #include "../component/Component.hpp"
     #include <array>
-    #include <atomic>
     #include <cstddef>
     #include <memory>
     #include <utility>
+    #include "../TypeId.hpp"
     #include "IResource.hpp"
     #include "Resource.hpp"
     #include "ResourceError.hpp"
@@ -21,24 +21,13 @@
 namespace kw
 {
 
-    namespace detail
-    {
-        // One counter for the whole process: a resource type has the same id
-        // in every World, and two threads can register types at the same time.
-        inline std::atomic<size_t>& resourceIdCounter(void) noexcept
-        {
-            static std::atomic<size_t> counter{0};
-            return counter;
-        }
-    }
-
     class ResourceManager
     {
     public:
         template<typename R>
         static size_t id(void) noexcept
         {
-            static const size_t id = detail::resourceIdCounter().fetch_add(1);
+            static const size_t id = detail::resourceTypeId(detail::typeName<R>());
             return id;
         }
 
